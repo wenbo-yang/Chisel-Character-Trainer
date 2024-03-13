@@ -6,14 +6,14 @@ import { Config } from './config';
 
 const config = new Config();
 
-const servicePorts = config.getServicePorts();
+const servicePorts = config.servicePorts;
 
 const privateKey = fs.readFileSync('./certs/key.pem');
 const certificate = fs.readFileSync('./certs/cert.crt');
 
 const credentials = { key: privateKey, cert: certificate };
 
-process.title = new Config().shortName;
+process.title = config.shortName;
 
 const app = express();
 
