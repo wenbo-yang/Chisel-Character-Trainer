@@ -1,2 +1,2 @@
-# Chisel-Character-Training
-Repository for training models 
+# Chisel-Character-Trainer
+Repository for training character models 

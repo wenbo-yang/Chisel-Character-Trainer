@@ -3,9 +3,10 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import { Config } from './config';
-import { GlobalServiceConfigs } from '../../Chisel-Global-Service-Configs/src/globalSeviceConfigs';
 
-const servicePorts = new GlobalServiceConfigs().getServicePorts('character-training', process.env.NODE_ENV || 'development');
+const config = new Config();
+
+const servicePorts = config.getServicePorts();
 
 const privateKey = fs.readFileSync('./certs/key.pem');
 const certificate = fs.readFileSync('./certs/cert.crt');
