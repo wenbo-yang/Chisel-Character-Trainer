@@ -1,6 +1,6 @@
 import { httpsUrl } from '../utils';
-import axios from 'axios';
-import { NeuralNetwork, likely } from 'brain.js';
+import axios, { HttpStatusCode } from 'axios';
+import exp from 'constants';
 import https from 'https';
 
 const axiosClient = axios.create({
@@ -19,5 +19,22 @@ describe('skeletonize request', () => {
         });
     });
 
-    describe('training character', () => {});
+    describe('training character', () => {
+        describe('POST /train', () => {
+            const trainUrl = httpsUrl + '/train';
+            it('should respond with 200 ok with a train request', async () => {
+                
+                const response = await axiosClient.post(trainUrl, {
+                    character: 'm',
+                    type: 'binary',
+                    compressiong: 'gzip',
+                    data: []
+                });
+
+                expect(response.data.executionId).toBeDefined();
+                expect(response.status).toEqual(HttpStatusCode.Created);
+            });
+        });
+
+    });
 });

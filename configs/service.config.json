@@ -1,4 +1,14 @@
 {
     "serviceName": "character-trainer",
-    "shortName": "c-train"
+    "shortName": "c-train",
+    "storage": [
+        {
+            "env": "developement",
+            "location": "./dev/storage/"
+        },
+        {
+            "env": "production",
+            "location": "not implemented"
+        }
+    ]
 }

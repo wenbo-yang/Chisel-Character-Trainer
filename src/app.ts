@@ -3,6 +3,8 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import { Config } from './config';
+import { ControllerFactory } from './controller/controllerFactory';
+import { HttpStatusCode } from 'axios';
 
 const config = new Config();
 
@@ -25,17 +27,15 @@ app.get('/healthCheck', (req, res) => {
 });
 
 app.post('/train', async (req, res) => {
-    // try {
-    //     const skeletonizeController = ControllerFactory.makeSkeletonizeController();
-    //     const data = await skeletonizeController.skeletonize(req);
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        const response = await characterTrainingController.train(req);
 
-    //     res.send(data);
-    // } catch (e) {
-    //     console.log(e as Error);
-
-    // }
-
-    res.send('Not Implemented').status(500);
+        res.status(HttpStatusCode.Created).send(response);
+    } catch (e) {
+        console.log(e as Error);
+        res.status(HttpStatusCode.InternalServerError).send('Not Implemented');
+    }
 });
 
 const httpServer = http.createServer(app);

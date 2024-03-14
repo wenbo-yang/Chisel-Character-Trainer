@@ -20,18 +20,6 @@ export class Config {
         this.globalServicePortMappings = parsedGlobalServicePortMappings || globalServicePortMappings;
     }
 
-    public get imageHeight() {
-        return 50;
-    }
-
-    public get imageWidth() {
-        return 40;
-    }
-
-    public get grayScaleWhiteThreshold() {
-        return 250;
-    }
-
     public get shortName() {
         return this.serviceConfig.shortName;
     }
