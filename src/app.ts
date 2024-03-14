@@ -30,7 +30,6 @@ app.post('/train', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
         const response = await characterTrainingController.train(req);
-
         res.status(HttpStatusCode.Created).send(response);
     } catch (e) {
         console.log(e as Error);
