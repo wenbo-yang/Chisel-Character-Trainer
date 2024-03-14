@@ -32,7 +32,7 @@ app.post('/train', async (req, res) => {
     //     res.send(data);
     // } catch (e) {
     //     console.log(e as Error);
-        
+
     // }
 
     res.send('Not Implemented').status(500);

@@ -1,7 +1,7 @@
 import { httpsUrl } from '../utils';
 import axios from 'axios';
+import { NeuralNetwork, likely } from 'brain.js';
 import https from 'https';
-
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -18,4 +18,6 @@ describe('skeletonize request', () => {
             expect(response.data).toBe('i am healthy!!!');
         });
     });
+
+    describe('training character', () => {});
 });

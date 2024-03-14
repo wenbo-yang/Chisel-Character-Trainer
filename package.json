@@ -1,9 +1,9 @@
 {
-    "name": "chisel-character-trainer",
+    "name": "chisel-character-training",
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "tests": "echo \"Error: no test specified\" && exit 1",
+        "tests": "npx jest --runInBand --testPathPattern=./test/unit",
         "build": "npx tsc",
         "start": "node dist/src/app.js",
         "watch": "npx tsc --watch",
