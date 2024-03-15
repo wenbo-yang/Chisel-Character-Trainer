@@ -1,4 +1,3 @@
-
 export interface TrainRequestBody {
     character: string;
     type: string;
@@ -9,11 +8,10 @@ export interface TrainRequestBody {
 export enum TRAININGSTATUS {
     CREATED = 'CREATED',
     INPROGRESS = 'INPROGRESS',
-    FINISHED = 'FINISHED'
+    FINISHED = 'FINISHED',
 }
 
 export interface TrainResponse {
     executionId: string;
     status: TRAININGSTATUS;
-} 
-
+}

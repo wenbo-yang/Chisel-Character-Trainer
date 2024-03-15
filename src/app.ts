@@ -29,8 +29,7 @@ app.get('/healthCheck', (req, res) => {
 app.post('/train', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const response = await characterTrainingController.train(req);
-        res.status(HttpStatusCode.Created).send(response);
+        await characterTrainingController.train(req, res);
     } catch (e) {
         console.log(e as Error);
         res.status(HttpStatusCode.InternalServerError).send('Not Implemented');
