@@ -23,18 +23,16 @@ describe('skeletonize request', () => {
         describe('POST /train', () => {
             const trainUrl = httpsUrl + '/train';
             it('should respond with 200 ok with a train request', async () => {
-                
                 const response = await axiosClient.post(trainUrl, {
                     character: 'm',
                     type: 'binary',
                     compressiong: 'gzip',
-                    data: []
+                    data: [],
                 });
 
                 expect(response.data.executionId).toBeDefined();
                 expect(response.status).toEqual(HttpStatusCode.Created);
             });
         });
-
     });
 });
