@@ -14,8 +14,9 @@ export class CharacterTrainingModel {
         this.characterTrainingDataStorage = characterTrainingDataStorage || new CharacterTrainingDataStorage(this.config);
     }
 
-    public async storeTrainingData(data: string[]): Promise<TrainResponse> {
-        
+    public async storeTrainingData(uncompressedData: string[], compressedData: string[]): Promise<TrainResponse> {
+        // ensure data size //
+
         return { executionId: 'some_id', status: TRAININGSTATUS.NOCHANGE };
     }
 }

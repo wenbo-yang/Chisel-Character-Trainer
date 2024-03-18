@@ -2,7 +2,7 @@ import { Request } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import { Config } from '../config';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
-import { ungzip } from 'node-gzip';
+import { gzip, ungzip } from 'node-gzip';
 import { COMPRESSIONTYPE, TRAININGDATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
 
 export class CharacterTrainingController {
@@ -17,14 +17,16 @@ export class CharacterTrainingController {
     public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainResponse> {
         const requestBody = req.body as TrainRequestBody; 
         let uncompressedData: string[] = [];
+        let compressedData: string[] = [];
         if (requestBody.dataType === TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE) {
             uncompressedData = await this.getUncompressedData(requestBody);
+            compressedData = await this.getCompressedData(requestBody);
         } else {
-            // need to read and convert data
+            // need to read and convert data, not implemented yet
             throw new Error('NOT IMPLEMENTED'); 
         }
 
-        const response = await this.characterTrainingModel.storeTrainingData(uncompressedData);
+        const response = await this.characterTrainingModel.storeTrainingData(uncompressedData, compressedData);
         
         return response;
     }
@@ -40,6 +42,21 @@ export class CharacterTrainingController {
             return data;
         }
 
-        return [...requestBody.data];
+        return requestBody.data;
     }
+    
+    private async getCompressedData(requestBody: TrainRequestBody): Promise<string[]> {
+        const data: string[] = []
+        if (requestBody.compression === COMPRESSIONTYPE.PLAIN) {
+            for (let i = 0; i < requestBody.data.length; i++) {
+                const gzipped = (await gzip(Buffer.from(requestBody.data[i]))).toString('base64');
+                data.push(gzipped.toString());
+            }
+
+            return data;
+        }
+
+        return requestBody.data;
+
+    } 
 }

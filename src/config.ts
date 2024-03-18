@@ -25,11 +25,11 @@ export class Config {
     }
 
     public get trainingDataHeight(): number {
-        return 100;
+        return 80;
     }
 
     public get trainingDataWidth(): number {
-        return 80
+        return 80;
     }
 
     public get env() {
