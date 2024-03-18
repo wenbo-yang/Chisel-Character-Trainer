@@ -115,15 +115,10 @@ describe('prototyping', () => {
     });
 
     it('gzip and unzip string', async () => {
-        const gzipped = (await gzip(Buffer.from(a))).toString('base64');
-        console.log(gzipped);
-
+        const gzipped = (await gzip(Buffer.from('000011110000\n000011110000'))).toString('base64');
         const ungzipped = (await ungzip(Buffer.from(gzipped, 'base64'))).toString();
-        
 
-        console.log(ungzipped);
-
-        expect(ungzipped).toEqual(a);
+        expect(ungzipped).toEqual('000011110000\n000011110000');
     })
 
 });

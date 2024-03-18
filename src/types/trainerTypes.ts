@@ -1,7 +1,7 @@
 export interface TrainRequestBody {
     character: string;
     dataType: TRAININGDATATYPE;
-    compressiong: COMPRESSIONTYPE;
+    compression: COMPRESSIONTYPE;
     data: string[];
 }
 

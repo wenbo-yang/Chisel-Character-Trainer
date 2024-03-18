@@ -1,9 +1,9 @@
-import { Request, Response } from 'express-serve-static-core';
+import { Request } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import { Config } from '../config';
-import { DATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
 import { ungzip } from 'node-gzip';
+import { COMPRESSIONTYPE, TRAININGDATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
 
 export class CharacterTrainingController {
     private config: Config;
@@ -17,7 +17,7 @@ export class CharacterTrainingController {
     public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainResponse> {
         const requestBody = req.body as TrainRequestBody; 
         let uncompressedData: string[] = [];
-        if (requestBody.dataType === DATATYPE.BINARYSTRINGWITHNEWLINE) {
+        if (requestBody.dataType === TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE) {
             uncompressedData = await this.getUncompressedData(requestBody);
         } else {
             // need to read and convert data
@@ -31,7 +31,7 @@ export class CharacterTrainingController {
 
     private async getUncompressedData(requestBody: TrainRequestBody): Promise<string[]> {
         const data: string[] = []
-        if (requestBody.compression === 'GZIP') {
+        if (requestBody.compression === COMPRESSIONTYPE.GZIP) {
             for (let i = 0; i < requestBody.data.length; i++) {
                 const ungzipped = await ungzip(Buffer.from(requestBody.data[i], 'base64'));
                 data.push(ungzipped.toString());

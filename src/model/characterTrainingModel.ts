@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { TRAININGSTATUS, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
+import { TRAININGSTATUS, TrainResponse } from '../types/trainerTypes';
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
 
