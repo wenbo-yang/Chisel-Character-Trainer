@@ -20,12 +20,16 @@ export class Config {
         this.globalServicePortMappings = parsedGlobalServicePortMappings || globalServicePortMappings;
     }
 
-    public get shortName() {
+    public get shortName(): string {
         return this.serviceConfig.shortName;
     }
 
-    public get useGpuSkeletonizer() {
-        return false;
+    public get trainingDataHeight(): number {
+        return 100;
+    }
+
+    public get trainingDataWidth(): number {
+        return 80
     }
 
     public get env() {

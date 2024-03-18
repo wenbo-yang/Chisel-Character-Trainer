@@ -5,6 +5,7 @@ import fs from 'fs';
 import { Config } from './config';
 import { ControllerFactory } from './controller/controllerFactory';
 import { HttpStatusCode } from 'axios';
+import { TRAININGSTATUS } from './types/trainerTypes';
 
 const config = new Config();
 
@@ -26,10 +27,11 @@ app.get('/healthCheck', (req, res) => {
     res.send('i am healthy!!!');
 });
 
-app.post('/train', async (req, res) => {
+app.post('/uploadTrainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        await characterTrainingController.train(req, res);
+        const response = await characterTrainingController.uploadTrainingData(req);
+        res.status(response.status === TRAININGSTATUS.NOCHANGE ? HttpStatusCode.NoContent : HttpStatusCode.Created).send(response);
     } catch (e) {
         console.log(e as Error);
         res.status(HttpStatusCode.InternalServerError).send('Not Implemented');
