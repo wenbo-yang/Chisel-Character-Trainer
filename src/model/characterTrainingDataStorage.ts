@@ -12,13 +12,11 @@ export class CharacterTrainingDataStorage {
     }
 
     public async saveData(trainingData: TrainingData): Promise<boolean> {
-        const currentData = await this.characterTrainingDataStorageDao.getCurrentTrainingData(trainingData.character); 
-
-        const currentSize = currentData.size;
-
+        const currentData = await this.characterTrainingDataStorageDao.getCurrentTrainingData(trainingData.character); z
+        
         const newData = new Map([...currentData, ...trainingData.data]);
 
-        if (newData.size > currentSize) {
+        if (newData.size > currentData.size) {
             await this.characterTrainingDataStorageDao.saveData(trainingData.character, newData);
             return true;
         }
