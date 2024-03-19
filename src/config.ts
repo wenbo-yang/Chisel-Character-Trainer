@@ -24,6 +24,10 @@ export class Config {
         return this.serviceConfig.shortName;
     }
 
+    public get serviceName(): string {
+        return this.serviceConfig.serviceName;
+    }
+
     public get trainingDataHeight(): number {
         return 80;
     }

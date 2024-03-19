@@ -27,3 +27,8 @@ export interface TrainResponse {
     executionId: string;
     status: TRAININGSTATUS;
 }
+
+export interface TrainingData {
+    character: string;
+    data: Map<string, string>;
+}
