@@ -5,11 +5,18 @@ export interface TrainRequestBody {
     data: string[];
 }
 
+export interface ModelTrainingStatus {
+    executionId: string;
+    status: TRAININGSTATUS;
+}
+
+export type TrainResponse = ModelTrainingStatus;
+
 export enum TRAININGSTATUS {
     CREATED = 'CREATED',
     INPROGRESS = 'INPROGRESS',
     FINISHED = 'FINISHED',
-    NOCHANGE = 'NOCHANGE'
+    NOCHANGE = 'NOCHANGE',
 }
 
 export enum TRAININGDATATYPE {
@@ -21,11 +28,6 @@ export enum TRAININGDATATYPE {
 export enum COMPRESSIONTYPE {
     GZIP = 'GZIP',
     PLAIN = 'PLAIN',
-}
-
-export interface TrainResponse {
-    executionId: string;
-    status: TRAININGSTATUS;
 }
 
 export interface TrainingData {

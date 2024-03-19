@@ -119,6 +119,7 @@ describe('prototyping', () => {
         const ungzipped = (await ungzip(Buffer.from(gzipped, 'base64'))).toString();
 
         expect(ungzipped).toEqual('000011110000\n000011110000');
-    })
+    });
 
+    it('gzip and unzip string', async () => {});
 });

@@ -1,14 +1,11 @@
-import { Config } from "../config";
-
 export abstract class CharacterTrainingDataStorageDao {
-    constructor() {
-    }
+    constructor() {}
 
     public async getCurrentTrainingData(character: string): Promise<Map<string, string>> {
-        throw new Error('Abstract class')
+        throw new Error('Abstract class');
     }
 
-    public async saveData(character: string, data: Map<string, string>): Promise<void> {
+    public async saveData(character: string, newData: Map<string, string>): Promise<void> {
         throw new Error('Abstract class');
     }
 }

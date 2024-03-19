@@ -4,11 +4,11 @@
     "storage": [
         {
             "env": "developement",
-            "location": "./dev/storage/"
+            "url": "./dev/storage/"
         },
         {
             "env": "production",
-            "location": "not implemented"
+            "url": "not implemented"
         }
     ]
 }

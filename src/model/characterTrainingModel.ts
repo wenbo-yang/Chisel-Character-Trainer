@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import { v5 as uuidv5 } from 'uuid';
+import * as uuidv5 from 'uuid/v5';
 
 export class CharacterTrainingModel {
     private config: Config;
@@ -18,14 +18,14 @@ export class CharacterTrainingModel {
     public async storeTrainingData(character: string, uncompressedData: string[], compressedData: string[]): Promise<TrainResponse> {
         // ensure data size //
         // will implement later
-        if (uncompressedData.find(d => d.split('\n').length !== this.config.trainingDataHeight || d.split('\n')[0].length !== this.config.trainingDataWidth)) {
-            throw new Error('Data size incompatible');
+        if (uncompressedData.find((d) => d.split('\n').length !== this.config.trainingDataHeight || d.split('\n')[0].length !== this.config.trainingDataWidth)) {
+            throw new Error('Data size incompatible, resizing will be implemented later.');
         }
 
-        const data: Map<string, string>  = new Map();
+        const data: Map<string, string> = new Map();
 
-        for (let i = 0; i< compressedData.length; i++) {
-            const key = uuidv5(compressedData[i], character);
+        for (let i = 0; i < compressedData.length; i++) {
+            const key = uuidv5(compressedData[i], this.config.serviceUUID);
             if (!data.has(key)) {
                 data.set(key, compressedData[i]);
             }
@@ -33,13 +33,13 @@ export class CharacterTrainingModel {
 
         const trainingData: TrainingData = {
             character,
-            data
-        }
+            data,
+        };
 
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
 
         const modelStatus = await this.characterModelStorage.getModelTrainingStatus(newDataSaved);
 
-        return { executionId: 'some_id', status: TRAININGSTATUS.NOCHANGE };
+        return modelStatus;
     }
 }

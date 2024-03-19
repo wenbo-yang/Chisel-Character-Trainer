@@ -1,0 +1,10 @@
+{
+    "character": "test_char",
+    "data": {
+        "dataType": "Map",
+        "values": [
+            ["key1", "value1"],
+            ["key2", "value2"]
+        ]
+    }
+}

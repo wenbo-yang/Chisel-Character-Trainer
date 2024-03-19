@@ -4,11 +4,17 @@ import * as globalServicePortMappings from '../Chisel-Global-Service-Configs/con
 export interface ServiceConfig {
     serviceName: string;
     shortName: string;
+    storage: Storage[];
 }
 
 export interface ServicePorts {
     http: number;
     https: number;
+}
+
+export interface Storage {
+    env: string;
+    url: string;
 }
 
 export class Config {
@@ -24,6 +30,10 @@ export class Config {
         return this.serviceConfig.shortName;
     }
 
+    public get serviceUUID(): string {
+        return 'c8a20000-3f40-400a-bd8c-72a10109ffff'; // alias for char---training
+    }
+
     public get serviceName(): string {
         return this.serviceConfig.serviceName;
     }
@@ -34,6 +44,10 @@ export class Config {
 
     public get trainingDataWidth(): number {
         return 80;
+    }
+
+    public get storageUrl(): string {
+        return (this.serviceConfig.storage.find((s) => s.env === this.env) || { env: 'developement', url: './dev/storage' }).url;
     }
 
     public get env() {

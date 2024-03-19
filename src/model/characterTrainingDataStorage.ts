@@ -1,6 +1,6 @@
 import { Config } from '../config';
-import { CharacterTrainingStorageDaoFactory } from '../dao/CharacterTrainingStorageDaoFactory';
-import { CharacterTrainingDataStorageDao } from '../dao/characterTraingDataStorageDao';
+import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
+import { CharacterTrainingDataStorageDao } from '../dao/characterTrainingDataStorageDao';
 import { TrainingData } from '../types/trainerTypes';
 
 export class CharacterTrainingDataStorage {
@@ -8,12 +8,11 @@ export class CharacterTrainingDataStorage {
     private characterTrainingDataStorageDao: CharacterTrainingDataStorageDao;
     constructor(config?: Config, characterTrainingDataStorageDao?: CharacterTrainingDataStorageDao) {
         this.config = config || new Config();
-        this.characterTrainingDataStorageDao = characterTrainingDataStorageDao || CharacterTrainingStorageDaoFactory.makeDataStorageDao(this.config);
+        this.characterTrainingDataStorageDao = characterTrainingDataStorageDao || CharacterStorageDaoFactory.makeTrainingDataStorageDao(this.config);
     }
 
     public async saveData(trainingData: TrainingData): Promise<boolean> {
-        const currentData = await this.characterTrainingDataStorageDao.getCurrentTrainingData(trainingData.character); z
-        
+        const currentData = await this.characterTrainingDataStorageDao.getCurrentTrainingData(trainingData.character);
         const newData = new Map([...currentData, ...trainingData.data]);
 
         if (newData.size > currentData.size) {
