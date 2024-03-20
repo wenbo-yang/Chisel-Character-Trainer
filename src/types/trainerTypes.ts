@@ -5,12 +5,14 @@ export interface TrainRequestBody {
     data: string[];
 }
 
-export interface ModelTrainingStatus {
+export interface ModelTrainingExecution {
     executionId: string;
+    updated: number;
     status: TRAININGSTATUS;
+    model?: any;
 }
 
-export type TrainResponse = ModelTrainingStatus;
+export type TrainResponse = ModelTrainingExecution;
 
 export enum TRAININGSTATUS {
     CREATED = 'CREATED',
