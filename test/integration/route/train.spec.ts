@@ -32,7 +32,7 @@ describe('skeletonize request', () => {
                 });
 
                 expect(response.data.executionId).toBeDefined();
-                expect(response.status).toEqual(HttpStatusCode.Created);
+                expect(response.status).toEqual(HttpStatusCode.AlreadyReported);
             });
         });
     });

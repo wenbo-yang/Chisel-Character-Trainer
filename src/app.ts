@@ -31,7 +31,7 @@ app.post('/uploadTrainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
         const response = await characterTrainingController.uploadTrainingData(req);
-        res.status(response.status === TRAININGSTATUS.NOCHANGE ? HttpStatusCode.NoContent : HttpStatusCode.Created).send(response);
+        res.status(response.status === TRAININGSTATUS.NOCHANGE ? HttpStatusCode.AlreadyReported : HttpStatusCode.Created).send(response);
     } catch (e) {
         console.log(e as Error);
         res.status(HttpStatusCode.InternalServerError).send(e);

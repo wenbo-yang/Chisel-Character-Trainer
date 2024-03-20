@@ -40,6 +40,6 @@ export class CharacterTrainingModel {
 
         const modelStatus = await this.characterModelStorage.getModelTrainingExecution(newDataSaved);
 
-        return { executionId: 'some_id', status: TRAININGSTATUS.CREATED };
+        return modelStatus;
     }
 }

@@ -14,21 +14,18 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
 
     public override async getLastestModel(): Promise<ModelTrainingExecution> {
         const folderPath = this.config.storageUrl + '/model/';
-
-        if (!fsSync.existsSync(folderPath)) {
-            throw new Error('nothing found');
-        }
-
-        const files = await fs.readdir(folderPath);
-
         const executions: ModelTrainingExecution[] = [];
 
-        for (let file of files) {
-            executions.push(JSON.parse((await fs.readFile(file)).toString()) as ModelTrainingExecution);
-        }
-
-        if (executions.length > 1) {
-            executions.sort((a, b) => b.updated - a.updated);
+        if (fsSync.existsSync(folderPath)) {
+            const files = await fs.readdir(folderPath);
+    
+            for (let file of files) {
+                executions.push(JSON.parse((await fs.readFile(file)).toString()) as ModelTrainingExecution);
+            }
+    
+            if (executions.length > 1) {
+                executions.sort((a, b) => b.updated - a.updated);
+            }
         }
 
         return executions.length > 0 ? executions[0] : { executionId: 'NO_EXECUTIONS', updated: -1, status: TRAININGSTATUS.NOCHANGE };
