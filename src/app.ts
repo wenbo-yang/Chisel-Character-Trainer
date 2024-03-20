@@ -34,7 +34,7 @@ app.post('/uploadTrainingData', async (req, res) => {
         res.status(response.status === TRAININGSTATUS.NOCHANGE ? HttpStatusCode.NoContent : HttpStatusCode.Created).send(response);
     } catch (e) {
         console.log(e as Error);
-        res.status(HttpStatusCode.InternalServerError).send('Not Implemented');
+        res.status(HttpStatusCode.InternalServerError).send(e);
     }
 });
 

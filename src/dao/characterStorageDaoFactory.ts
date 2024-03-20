@@ -8,10 +8,10 @@ import { CharacterModelDocumentDBStorageDao } from './characterModelDocumentDBSt
 
 export class CharacterStorageDaoFactory {
     public static makeTrainingDataStorageDao(config: Config): CharacterTrainingDataStorageDao {
-        return config.env === 'developement' ? new CharacterTrainingLocalDataStorageDao(config) : new CharacterTrainingDocumentDBStorageDao(config);
+        return config.env === 'development' ? new CharacterTrainingLocalDataStorageDao(config) : new CharacterTrainingDocumentDBStorageDao(config);
     }
 
     public static makeModelStorageDao(config: Config): CharacterModelStorageDao {
-        return config.env === 'developement' ? new CharacterModelLocalDataStorageDao(config) : new CharacterModelDocumentDBStorageDao(config);
+        return config.env === 'development' ? new CharacterModelLocalDataStorageDao(config) : new CharacterModelDocumentDBStorageDao(config);
     }
 }

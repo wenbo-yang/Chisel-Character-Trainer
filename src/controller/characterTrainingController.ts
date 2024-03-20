@@ -19,11 +19,11 @@ export class CharacterTrainingController {
         let uncompressedData: string[] = [];
         let compressedData: string[] = [];
         if (requestBody.dataType === TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE) {
-            uncompressedData = await this.getUncompressedData(requestBody);
+            uncompressedData = await this.getDecompressedData(requestBody);
             compressedData = await this.getCompressedData(requestBody);
         } else {
             // need to read and convert data, not implemented yet
-            throw new Error('NOT IMPLEMENTED');
+            throw new Error('DataType other than BINARYSTRINGWITHNEWLINE are NOT IMPLEMENTED!!!');
         }
 
         const response = await this.characterTrainingModel.storeTrainingData(requestBody.character, uncompressedData, compressedData);
@@ -31,7 +31,7 @@ export class CharacterTrainingController {
         return response;
     }
 
-    private async getUncompressedData(requestBody: TrainRequestBody): Promise<string[]> {
+    private async getDecompressedData(requestBody: TrainRequestBody): Promise<string[]> {
         const data: string[] = [];
         if (requestBody.compression === COMPRESSIONTYPE.GZIP) {
             for (let i = 0; i < requestBody.data.length; i++) {

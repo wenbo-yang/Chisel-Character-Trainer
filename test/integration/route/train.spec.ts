@@ -2,6 +2,7 @@ import { httpsUrl } from '../utils';
 import axios, { HttpStatusCode } from 'axios';
 import exp from 'constants';
 import https from 'https';
+import { TRAININGDATATYPE } from '../../../src/types/trainerTypes';
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -20,13 +21,13 @@ describe('skeletonize request', () => {
     });
 
     describe('training character', () => {
-        describe('POST /train', () => {
-            const trainUrl = httpsUrl + '/train';
+        describe('POST /uploadTrainingData', () => {
+            const trainUrl = httpsUrl + '/uploadTrainingData';
             it('should respond with 200 ok with a train request', async () => {
                 const response = await axiosClient.post(trainUrl, {
                     character: 'm',
-                    type: 'binary',
-                    compressiong: 'gzip',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: 'gzip',
                     data: [],
                 });
 

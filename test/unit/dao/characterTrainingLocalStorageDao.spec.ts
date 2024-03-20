@@ -1,5 +1,4 @@
 import { CharacterTrainingLocalDataStorageDao } from '../../../src/dao/characterTrainingLocalDataStorageDao';
-import { v5 as uuidv5 } from 'uuid';
 
 describe('characterTrainingLocalStorageDao', () => {
     it('should be able to save data read data to and from local storage', async () => {
@@ -13,6 +12,8 @@ describe('characterTrainingLocalStorageDao', () => {
         );
 
         const result = await storageDao.getCurrentTrainingData('test_char');
+
+        await storageDao.deleteData('test_char');
 
         expect(result).toBeDefined();
         expect(result.get('key1')).toEqual('value1');

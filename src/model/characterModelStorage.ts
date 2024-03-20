@@ -14,7 +14,7 @@ export class CharacterModelStorage {
     }
 
     public async getCharacterModel(): Promise<INeuralNetworkJSON> {
-        throw new Error('Not Implemented');
+        throw new Error('getCharacterModel Not Implemented');
     }
 
     public async getModelTrainingStatus(dataSaved: boolean): Promise<ModelTrainingStatus> {

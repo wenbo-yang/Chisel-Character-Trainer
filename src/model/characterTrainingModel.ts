@@ -1,8 +1,8 @@
-import { Config } from '../config';
-import { TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import * as uuidv5 from 'uuid/v5';
+import { TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
+import { Config } from '../config';
+import { v5 as uuidv5 } from 'uuid';
 
 export class CharacterTrainingModel {
     private config: Config;
@@ -38,8 +38,8 @@ export class CharacterTrainingModel {
 
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
 
-        const modelStatus = await this.characterModelStorage.getModelTrainingStatus(newDataSaved);
+        // const modelStatus = await this.characterModelStorage.getModelTrainingStatus(newDataSaved);
 
-        return modelStatus;
+        return { executionId: 'some_id', status: TRAININGSTATUS.CREATED };
     }
 }

@@ -34,3 +34,8 @@ export interface TrainingData {
     character: string;
     data: Map<string, string>;
 }
+
+export interface SavedTrainingData {
+    character: string;
+    data: string[][];
+}

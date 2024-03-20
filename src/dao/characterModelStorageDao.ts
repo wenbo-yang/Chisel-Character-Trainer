@@ -4,10 +4,10 @@ export abstract class CharacterModelStorageDao {
     constructor() {}
 
     public async getLastestModel(): Promise<ModelTrainingStatus> {
-        throw new Error('Abstract class');
+        throw new Error('getLastestModel Abstract class');
     }
 
     public async initiateTraining(): Promise<ModelTrainingStatus> {
-        throw new Error('Abstract class');
+        throw new Error('initiateTraining Abstract class');
     }
 }
