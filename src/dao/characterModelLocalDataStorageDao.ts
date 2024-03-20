@@ -43,5 +43,17 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         return newTrainingExecution;
     }
 
-    public override async deleteTrainingExecutions(): Promise<void> {}
+    public override async deleteTrainingExecutions(): Promise<void> {
+        const folderPath = this.config.storageUrl + '/model/';
+
+        if (!fsSync.existsSync(folderPath)) {
+            return;
+        }
+
+        const files = await fs.readdir(folderPath);
+
+        for (let file of files) {
+            await fs.unlink(file);
+        }
+    }
 }
