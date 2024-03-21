@@ -1,4 +1,4 @@
-import { IConfig, ServicePorts } from "../../src/types/trainerTypes";
+import { IConfig, ServicePorts } from '../../src/types/trainerTypes';
 
 export const httpsUrl = 'https://localhost:3001';
 
@@ -10,5 +10,5 @@ export const integrationTestConfig = {
     trainingDataWidth: 80,
     storageUrl: './dev/localStorage',
     env: 'development',
-    servicePorts: {http: 5001, https: 3001},
+    servicePorts: { http: 5001, https: 3001 },
 } as IConfig;

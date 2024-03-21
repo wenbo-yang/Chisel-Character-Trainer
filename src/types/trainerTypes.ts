@@ -59,12 +59,12 @@ export interface Storage {
 }
 
 export interface IConfig {
-    shortName: string ;
+    shortName: string;
     serviceUUID: string;
     serviceName: string;
     trainingDataHeight: number;
-    trainingDataWidth: number 
-    storageUrl: string 
+    trainingDataWidth: number;
+    storageUrl: string;
     env: string;
     servicePorts: ServicePorts;
 }
