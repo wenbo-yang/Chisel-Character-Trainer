@@ -31,7 +31,7 @@ export class CharacterTrainingLocalDataStorageDao extends CharacterTrainingDataS
         const filePath = this.config.storageUrl + '/data/' + uuid + '.json';
 
         if (!fsSync.existsSync(this.config.storageUrl + '/data')) {
-            await fs.mkdir(this.config.storageUrl + '/data', {recursive: true});
+            await fs.mkdir(this.config.storageUrl + '/data', { recursive: true });
         }
 
         const output = JSON.stringify({ character, data: Array.from(newData.entries()) } as SavedTrainingData);

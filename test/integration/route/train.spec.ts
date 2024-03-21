@@ -31,16 +31,12 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [
-                        data.skeleton,
-                        data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke
-                    ],
+                    data: [data.skeleton, data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(response.data.executionId).toBeDefined();
                 expect(response.status).toEqual(HttpStatusCode.Created);
             });
-            
         });
     });
 });

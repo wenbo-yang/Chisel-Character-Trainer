@@ -19,11 +19,11 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
 
         if (fsSync.existsSync(folderPath)) {
             const files = await fs.readdir(folderPath);
-    
+
             for (let file of files) {
                 executions.push(JSON.parse((await fs.readFile(path.join(folderPath, file))).toString()) as ModelTrainingExecution);
             }
-    
+
             if (executions.length > 1) {
                 executions.sort((a, b) => b.updated - a.updated);
             }
@@ -36,7 +36,7 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         const filePath = this.config.storageUrl + '/model/model_' + Date.now() + '.json';
 
         if (!fsSync.existsSync(this.config.storageUrl + '/model')) {
-            await fs.mkdir(this.config.storageUrl + '/model', {recursive: true});
+            await fs.mkdir(this.config.storageUrl + '/model', { recursive: true });
         }
 
         const newTrainingExecution = { executionId: uuidv4(), updated: Date.now(), status: TRAININGSTATUS.CREATED } as ModelTrainingExecution;
