@@ -3,12 +3,12 @@ import { CharacterTrainingDataStorageDao } from './characterTrainingDataStorageD
 import { v5 as uuidv5 } from 'uuid';
 import fs from 'fs/promises';
 import * as fsSync from 'fs';
-import { SavedTrainingData } from '../types/trainerTypes';
+import { IConfig, SavedTrainingData } from '../types/trainerTypes';
 import { deleteAllFilesInFolder } from './daoUtils';
 
 export class CharacterTrainingLocalDataStorageDao extends CharacterTrainingDataStorageDao {
-    private config: Config;
-    constructor(config?: Config) {
+    private config: IConfig;
+    constructor(config?: IConfig) {
         super();
         this.config = config || new Config();
     }

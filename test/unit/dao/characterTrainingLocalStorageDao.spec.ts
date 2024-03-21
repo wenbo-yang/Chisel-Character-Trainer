@@ -13,7 +13,7 @@ describe('characterTrainingLocalStorageDao', () => {
 
         const result = await storageDao.getCurrentTrainingData('test_char');
 
-        await storageDao.deleteData('test_char');
+        await storageDao.deleteSelectedCharacterTrainingData('test_char');
 
         expect(result).toBeDefined();
         expect(result.get('key1')).toEqual('value1');

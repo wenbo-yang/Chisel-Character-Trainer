@@ -1,12 +1,12 @@
 import { Config } from '../config';
 import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
 import { CharacterTrainingDataStorageDao } from '../dao/characterTrainingDataStorageDao';
-import { TrainingData } from '../types/trainerTypes';
+import { IConfig, TrainingData } from '../types/trainerTypes';
 
 export class CharacterTrainingDataStorage {
-    private config: Config;
+    private config: IConfig;
     private characterTrainingDataStorageDao: CharacterTrainingDataStorageDao;
-    constructor(config?: Config, characterTrainingDataStorageDao?: CharacterTrainingDataStorageDao) {
+    constructor(config?: IConfig, characterTrainingDataStorageDao?: CharacterTrainingDataStorageDao) {
         this.config = config || new Config();
         this.characterTrainingDataStorageDao = characterTrainingDataStorageDao || CharacterStorageDaoFactory.makeTrainingDataStorageDao(this.config);
     }

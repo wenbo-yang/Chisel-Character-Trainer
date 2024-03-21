@@ -1,13 +1,13 @@
 import { INeuralNetworkJSON } from 'brain.js/dist/neural-network';
 import { Config } from '../config';
-import { ModelTrainingExecution } from '../types/trainerTypes';
+import { IConfig, ModelTrainingExecution } from '../types/trainerTypes';
 import { CharacterModelStorageDao } from '../dao/characterModelStorageDao';
 import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
 
 export class CharacterModelStorage {
-    private config: Config;
+    private config: IConfig;
     private characterModelStorageDao: CharacterModelStorageDao;
-    constructor(config?: Config, characterModelStorageDao?: CharacterModelStorageDao) {
+    constructor(config?: IConfig, characterModelStorageDao?: CharacterModelStorageDao) {
         this.config = config || new Config();
         this.characterModelStorageDao = characterModelStorageDao || CharacterStorageDaoFactory.makeModelStorageDao(this.config);
     }

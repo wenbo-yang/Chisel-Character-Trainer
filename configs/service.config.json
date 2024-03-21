@@ -4,7 +4,7 @@
     "storage": [
         {
             "env": "development",
-            "url": "./dev/storage/"
+            "url": "./dev/localStorage"
         },
         {
             "env": "production",

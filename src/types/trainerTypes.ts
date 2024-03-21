@@ -41,3 +41,30 @@ export interface SavedTrainingData {
     character: string;
     data: string[][];
 }
+
+export interface ServiceConfig {
+    serviceName: string;
+    shortName: string;
+    storage: Storage[];
+}
+
+export interface ServicePorts {
+    http: number;
+    https: number;
+}
+
+export interface Storage {
+    env: string;
+    url: string;
+}
+
+export interface IConfig {
+    shortName: string ;
+    serviceUUID: string;
+    serviceName: string;
+    trainingDataHeight: number;
+    trainingDataWidth: number 
+    storageUrl: string 
+    env: string;
+    servicePorts: ServicePorts;
+}

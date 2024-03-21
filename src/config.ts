@@ -1,23 +1,8 @@
 import * as staticServiceConfig from '../configs/service.config.json';
 import * as globalServicePortMappings from '../Chisel-Global-Service-Configs/configs/globalServicePortMappings.json';
+import { IConfig, ServiceConfig, ServicePorts } from './types/trainerTypes';
 
-export interface ServiceConfig {
-    serviceName: string;
-    shortName: string;
-    storage: Storage[];
-}
-
-export interface ServicePorts {
-    http: number;
-    https: number;
-}
-
-export interface Storage {
-    env: string;
-    url: string;
-}
-
-export class Config {
+export class Config implements IConfig {
     private serviceConfig: ServiceConfig;
     private globalServicePortMappings: any;
 

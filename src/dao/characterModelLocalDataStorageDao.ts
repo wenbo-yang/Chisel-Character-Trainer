@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { ModelTrainingExecution, TRAININGSTATUS } from '../types/trainerTypes';
+import { IConfig, ModelTrainingExecution, TRAININGSTATUS } from '../types/trainerTypes';
 import { CharacterModelStorageDao } from './characterModelStorageDao';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs/promises';
@@ -8,8 +8,8 @@ import path from 'path';
 import { deleteAllFilesInFolder } from './daoUtils';
 
 export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao {
-    private config: Config;
-    constructor(config?: Config) {
+    private config: IConfig;
+    constructor(config?: IConfig) {
         super();
         this.config = config || new Config();
     }

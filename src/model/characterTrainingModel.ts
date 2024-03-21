@@ -1,15 +1,15 @@
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import { TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
+import { IConfig, TrainResponse, TrainingData } from '../types/trainerTypes';
 import { Config } from '../config';
 import { v5 as uuidv5 } from 'uuid';
 
 export class CharacterTrainingModel {
-    private config: Config;
+    private config: IConfig;
     private characterModelStorage: CharacterModelStorage;
     private characterTrainingDataStorage: CharacterTrainingDataStorage;
 
-    constructor(config?: Config, characterModelStorage?: CharacterModelStorage, characterTrainingDataStorage?: CharacterTrainingDataStorage) {
+    constructor(config?: IConfig, characterModelStorage?: CharacterModelStorage, characterTrainingDataStorage?: CharacterTrainingDataStorage) {
         this.config = config || new Config();
         this.characterModelStorage = characterModelStorage || new CharacterModelStorage(this.config);
         this.characterTrainingDataStorage = characterTrainingDataStorage || new CharacterTrainingDataStorage(this.config);

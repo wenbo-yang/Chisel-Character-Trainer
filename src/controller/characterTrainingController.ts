@@ -3,13 +3,13 @@ import { ParsedQs } from 'qs';
 import { Config } from '../config';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
 import { gzip, ungzip } from 'node-gzip';
-import { COMPRESSIONTYPE, TRAININGDATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
+import { COMPRESSIONTYPE, IConfig, TRAININGDATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
 
 export class CharacterTrainingController {
-    private config: Config;
+    private config: IConfig;
     private characterTrainingModel: CharacterTrainingModel;
 
-    constructor(config?: Config, characterTrainingModel?: CharacterTrainingModel) {
+    constructor(config?: IConfig, characterTrainingModel?: CharacterTrainingModel) {
         this.config = config || new Config();
         this.characterTrainingModel = characterTrainingModel || new CharacterTrainingModel(this.config);
     }

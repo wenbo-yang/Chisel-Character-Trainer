@@ -1,4 +1,4 @@
-import { httpsUrl } from '../utils';
+import { httpsUrl, integrationTestConfig } from '../utils';
 import axios, { HttpStatusCode } from 'axios';
 import https from 'https';
 import fs from 'fs/promises';
@@ -24,9 +24,13 @@ describe('skeletonize request', () => {
 
     describe('training character', () => {
         describe('POST /uploadTrainingData', () => {
+            beforeAll(() => {
+                process.env.NODE_ENV = 'development';
+            });
+
             afterEach(() => {
-                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(new Config());
-                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(new Config());
+                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
+                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
                 modelStorage.deleteAllTrainingExecutions();
                 trainingDataStroage.deleteAllTrainingData();
