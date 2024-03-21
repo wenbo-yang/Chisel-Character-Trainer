@@ -1,8 +1,8 @@
 import { httpsUrl } from '../utils';
 import axios, { HttpStatusCode } from 'axios';
-import exp from 'constants';
 import https from 'https';
-import { TRAININGDATATYPE } from '../../../src/types/trainerTypes';
+import fs from 'fs/promises';
+import { COMPRESSIONTYPE, TRAININGDATATYPE } from '../../../src/types/trainerTypes';
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -22,18 +22,25 @@ describe('skeletonize request', () => {
 
     describe('training character', () => {
         describe('POST /uploadTrainingData', () => {
-            const trainUrl = httpsUrl + '/uploadTrainingData';
-            it('should respond with 200 ok with a train request', async () => {
-                const response = await axiosClient.post(trainUrl, {
-                    character: 'm',
+            const uploadTrainingDataUrl = httpsUrl + '/uploadTrainingData';
+            it('should respond with 201 created with new train request', async () => {
+                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                const data = JSON.parse((await fs.readFile(dataUrl)).toString());
+
+                const response = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
-                    compression: 'gzip',
-                    data: [],
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [
+                        data.skeleton,
+                        data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke
+                    ],
                 });
 
                 expect(response.data.executionId).toBeDefined();
-                expect(response.status).toEqual(HttpStatusCode.AlreadyReported);
+                expect(response.status).toEqual(HttpStatusCode.Created);
             });
+            
         });
     });
 });
