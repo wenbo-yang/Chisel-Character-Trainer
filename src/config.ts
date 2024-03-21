@@ -47,7 +47,7 @@ export class Config {
     }
 
     public get storageUrl(): string {
-        return (this.serviceConfig.storage.find((s) => s.env === this.env) || { env: 'developement', url: './dev/storage' }).url;
+        return (this.serviceConfig.storage.find((s) => s.env === this.env) || { env: 'development', url: './dev/localStorage' }).url;
     }
 
     public get env() {

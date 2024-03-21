@@ -3,7 +3,7 @@
     "shortName": "c-train",
     "storage": [
         {
-            "env": "developement",
+            "env": "development",
             "url": "./dev/storage/"
         },
         {
