@@ -9,7 +9,11 @@ export abstract class CharacterTrainingDataStorageDao {
         throw new Error('saveData Abstract class');
     }
 
-    public async deleteData(character: string): Promise<void> {
-        throw new Error('deleteData Abstract class');
+    public async deleteAllTrainingData(): Promise<void> {
+        throw new Error('deleteAllTrainingData Abstract class');
+    }
+
+    public async deleteSelectedCharacterTrainingData(character?: string): Promise<void> {
+        throw new Error('deleteSelectedCharacterTrainingData Abstract class');
     }
 }

@@ -3,6 +3,8 @@ import axios, { HttpStatusCode } from 'axios';
 import https from 'https';
 import fs from 'fs/promises';
 import { COMPRESSIONTYPE, TRAININGDATATYPE } from '../../../src/types/trainerTypes';
+import {CharacterStorageDaoFactory} from '../../../src/dao/characterStorageDaoFactory';
+import { Config } from '../../../src/config';
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -22,7 +24,16 @@ describe('skeletonize request', () => {
 
     describe('training character', () => {
         describe('POST /uploadTrainingData', () => {
+            afterEach(() => {
+                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(new Config());
+                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(new Config());
+
+                modelStorage.deleteAllTrainingExecutions();
+                trainingDataStroage.deleteAllTrainingData();
+            })
+
             const uploadTrainingDataUrl = httpsUrl + '/uploadTrainingData';
+            
             it('should respond with 201 created with new train request', async () => {
                 const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
                 const data = JSON.parse((await fs.readFile(dataUrl)).toString());

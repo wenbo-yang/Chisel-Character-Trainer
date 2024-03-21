@@ -11,7 +11,11 @@ export abstract class CharacterModelStorageDao {
         throw new Error('initiateTraining Abstract class');
     }
 
-    public async deleteTrainingExecutions(): Promise<void> {
+    public async deleteAllTrainingExecutions(): Promise<void> {
+        throw new Error('deleteAllTrainingExecutions Abstract class');
+    }
+
+    public async deleteSelectedTrainingExecution(executionId: string): Promise<void> {
         throw new Error('deleteTrainingExecutions Abstract class');
     }
 }

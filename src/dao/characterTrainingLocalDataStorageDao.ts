@@ -4,6 +4,7 @@ import { v5 as uuidv5 } from 'uuid';
 import fs from 'fs/promises';
 import * as fsSync from 'fs';
 import { SavedTrainingData } from '../types/trainerTypes';
+import { deleteAllFilesInFolder } from './daoUtils';
 
 export class CharacterTrainingLocalDataStorageDao extends CharacterTrainingDataStorageDao {
     private config: Config;
@@ -39,12 +40,17 @@ export class CharacterTrainingLocalDataStorageDao extends CharacterTrainingDataS
         await fs.writeFile(filePath, output);
     }
 
-    public override async deleteData(character: string): Promise<void> {
+    public override async deleteSelectedCharacterTrainingData(character: string): Promise<void> {
         const uuid = uuidv5(character, this.config.serviceUUID);
         const filePath = this.config.storageUrl + '/data/' + uuid + '.json';
 
         if (fsSync.existsSync(filePath)) {
             await fs.unlink(filePath);
         }
+    }
+
+    public override async deleteAllTrainingData(): Promise<void> {
+        const folderPath = this.config.storageUrl + '/data';
+        await deleteAllFilesInFolder(folderPath);
     }
 }

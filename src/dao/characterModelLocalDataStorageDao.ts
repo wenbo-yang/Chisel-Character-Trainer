@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
+import { deleteAllFilesInFolder } from './daoUtils';
 
 export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao {
     private config: Config;
@@ -45,17 +46,9 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         return newTrainingExecution;
     }
 
-    public override async deleteTrainingExecutions(): Promise<void> {
+    public override async deleteAllTrainingExecutions(): Promise<void> {
         const folderPath = this.config.storageUrl + '/model';
 
-        if (!fsSync.existsSync(folderPath)) {
-            return;
-        }
-
-        const files = await fs.readdir(folderPath);
-
-        for (let file of files) {
-            await fs.unlink(file);
-        }
+        await deleteAllFilesInFolder(folderPath);
     }
 }
