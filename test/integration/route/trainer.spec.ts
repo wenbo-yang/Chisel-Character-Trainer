@@ -23,6 +23,8 @@ describe('skeletonize request', () => {
 
     describe('training character', () => {
         describe('POST /uploadTrainingData', () => {
+            const uploadTrainingDataUrl = httpsUrl + '/uploadTrainingData';
+
             beforeAll(() => {
                 process.env.NODE_ENV = 'development';
             });
@@ -31,11 +33,9 @@ describe('skeletonize request', () => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
                 const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
-                modelStorage.deleteAllTrainingExecutions();
-                trainingDataStroage.deleteAllTrainingData();
+                // modelStorage.deleteAllTrainingExecutions();
+                // trainingDataStroage.deleteAllTrainingData();
             });
-
-            const uploadTrainingDataUrl = httpsUrl + '/uploadTrainingData';
 
             it('should respond with 201 created with new train request', async () => {
                 const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
@@ -45,7 +45,22 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.skeleton, data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke]
+                });
+
+                expect(response.data.executionId).toBeDefined();
+                expect(response.status).toEqual(HttpStatusCode.Created);
+            });
+
+            it('should respond with 201 created with new data request of the same character', async () => {
+                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                const data = JSON.parse((await fs.readFile(dataUrl)).toString());
+
+                const response = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [data.skeleton, data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke]
                 });
 
                 expect(response.data.executionId).toBeDefined();
