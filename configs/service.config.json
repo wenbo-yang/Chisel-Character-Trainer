@@ -3,12 +3,12 @@
     "shortName": "c-train",
     "storage": [
         {
-            "env": "developement",
-            "location": "./dev/storage/"
+            "env": "development",
+            "url": "./dev/localStorage"
         },
         {
             "env": "production",
-            "location": "not implemented"
+            "url": "not implemented"
         }
     ]
 }

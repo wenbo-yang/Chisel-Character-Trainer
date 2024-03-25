@@ -1,17 +1,8 @@
 import * as staticServiceConfig from '../configs/service.config.json';
 import * as globalServicePortMappings from '../Chisel-Global-Service-Configs/configs/globalServicePortMappings.json';
+import { IConfig, ServiceConfig, ServicePorts } from './types/trainerTypes';
 
-export interface ServiceConfig {
-    serviceName: string;
-    shortName: string;
-}
-
-export interface ServicePorts {
-    http: number;
-    https: number;
-}
-
-export class Config {
+export class Config implements IConfig {
     private serviceConfig: ServiceConfig;
     private globalServicePortMappings: any;
 
@@ -20,12 +11,28 @@ export class Config {
         this.globalServicePortMappings = parsedGlobalServicePortMappings || globalServicePortMappings;
     }
 
-    public get shortName() {
+    public get shortName(): string {
         return this.serviceConfig.shortName;
     }
 
-    public get useGpuSkeletonizer() {
-        return false;
+    public get serviceUUID(): string {
+        return 'c8a20000-3f40-400a-bd8c-72a10109ffff'; // alias for char---training
+    }
+
+    public get serviceName(): string {
+        return this.serviceConfig.serviceName;
+    }
+
+    public get trainingDataHeight(): number {
+        return 80;
+    }
+
+    public get trainingDataWidth(): number {
+        return 80;
+    }
+
+    public get storageUrl(): string {
+        return (this.serviceConfig.storage.find((s) => s.env === this.env) || { env: 'development', url: './dev/localStorage' }).url;
     }
 
     public get env() {

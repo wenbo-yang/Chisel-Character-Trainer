@@ -1,4 +1,5 @@
 import { NeuralNetwork, likely } from 'brain.js';
+import { gzip, ungzip } from 'node-gzip';
 
 describe('prototyping', () => {
     function character(string: string): number[] {
@@ -112,4 +113,13 @@ describe('prototyping', () => {
 
         expect(likely(testChar, newNet)).toBe('b');
     });
+
+    it('gzip and unzip string', async () => {
+        const gzipped = (await gzip(Buffer.from('000011110000\n000011110000'))).toString('base64');
+        const ungzipped = (await ungzip(Buffer.from(gzipped, 'base64'))).toString();
+
+        expect(ungzipped).toEqual('000011110000\n000011110000');
+    });
+
+    it('gzip and unzip string', async () => {});
 });

@@ -1,30 +1,61 @@
-import { Request, Response } from 'express-serve-static-core';
+import { Request } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import { Config } from '../config';
-import { TRAININGSTATUS, TrainRequestBody, TrainResponse } from '../types/trainTypes';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
-import { HttpStatusCode } from 'axios';
+import { gzip, ungzip } from 'node-gzip';
+import { COMPRESSIONTYPE, IConfig, TRAININGDATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
 
 export class CharacterTrainingController {
-    private config: Config;
+    private config: IConfig;
+    private characterTrainingModel: CharacterTrainingModel;
 
-    constructor(config?: Config, characterTrainingModel?: CharacterTrainingModel) {
+    constructor(config?: IConfig, characterTrainingModel?: CharacterTrainingModel) {
         this.config = config || new Config();
+        this.characterTrainingModel = characterTrainingModel || new CharacterTrainingModel(this.config);
     }
 
-    public async train(req: Request<{}, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
-        const body = req.body as TrainRequestBody;
+    public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainResponse> {
+        const requestBody = req.body as TrainRequestBody;
+        let uncompressedData: string[] = [];
+        let compressedData: string[] = [];
+        if (requestBody.dataType === TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE) {
+            uncompressedData = await this.getDecompressedData(requestBody);
+            compressedData = await this.getCompressedData(requestBody);
+        } else {
+            // need to read and convert data, not implemented yet
+            throw new Error('DataType other than BINARYSTRINGWITHNEWLINE are NOT IMPLEMENTED!!!');
+        }
 
-        const response: TrainResponse = {
-            executionId: 'some_id',
-            status: TRAININGSTATUS.CREATED,
-        };
+        const response = await this.characterTrainingModel.storeTrainingData(requestBody.character, uncompressedData, compressedData);
 
-        res.status(HttpStatusCode.Created).send(response);
-        await this.trainCharacterModel();
+        return response;
     }
 
-    private async trainCharacterModel(): Promise<void> {
-        return;
+    private async getDecompressedData(requestBody: TrainRequestBody): Promise<string[]> {
+        const data: string[] = [];
+        if (requestBody.compression === COMPRESSIONTYPE.GZIP) {
+            for (let i = 0; i < requestBody.data.length; i++) {
+                const ungzipped = await ungzip(Buffer.from(requestBody.data[i], 'base64'));
+                data.push(ungzipped.toString());
+            }
+
+            return data;
+        }
+
+        return requestBody.data;
+    }
+
+    private async getCompressedData(requestBody: TrainRequestBody): Promise<string[]> {
+        const data: string[] = [];
+        if (requestBody.compression === COMPRESSIONTYPE.PLAIN) {
+            for (let i = 0; i < requestBody.data.length; i++) {
+                const gzipped = (await gzip(Buffer.from(requestBody.data[i]))).toString('base64');
+                data.push(gzipped.toString());
+            }
+
+            return data;
+        }
+
+        return requestBody.data;
     }
 }
