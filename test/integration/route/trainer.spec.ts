@@ -33,8 +33,8 @@ describe('skeletonize request', () => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
                 const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
-                // modelStorage.deleteAllTrainingExecutions();
-                // trainingDataStroage.deleteAllTrainingData();
+                modelStorage.deleteAllTrainingExecutions();
+                trainingDataStroage.deleteAllTrainingData();
             });
 
             it('should respond with 201 created with new train request', async () => {
@@ -56,14 +56,25 @@ describe('skeletonize request', () => {
                 const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
                 const data = JSON.parse((await fs.readFile(dataUrl)).toString());
 
-                const response = await axiosClient.post(uploadTrainingDataUrl, {
+                let response = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.skeleton, data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke]
+                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke]
                 });
 
+                const originalExecutionId = response.data.executionId;
+
+                response = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [data.skeleton]
+                });
+
+                expect(originalExecutionId).toBeDefined();
                 expect(response.data.executionId).toBeDefined();
+                expect(response.data.executionId).not.toEqual(originalExecutionId);
                 expect(response.status).toEqual(HttpStatusCode.Created);
             });
         });
