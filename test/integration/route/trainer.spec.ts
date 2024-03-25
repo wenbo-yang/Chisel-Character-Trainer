@@ -27,7 +27,7 @@ describe('skeletonize request', () => {
                 process.env.NODE_ENV = 'development';
             });
 
-            afterEach(() => {
+            afterAll(() => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
                 const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
