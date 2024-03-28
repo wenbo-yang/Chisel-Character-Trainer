@@ -30,14 +30,15 @@ app.get('/healthCheck', (req, res) => {
 app.post('/uploadTrainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const response = await characterTrainingController.uploadTrainingData(req);
-        let status: number = HttpStatusCode.Ok;
-        if (response.status === TRAININGSTATUS.CREATED) {
-            status = HttpStatusCode.Created;
-        } else if (response.status === TRAININGSTATUS.NOCHANGE) {
-            status = HttpStatusCode.AlreadyReported;
+        const trainingStatus = await characterTrainingController.uploadTrainingData(req);
+
+        if (trainingStatus === TRAININGSTATUS.CREATED) {
+            res.sendStatus(HttpStatusCode.Created);
+        } else if (trainingStatus === TRAININGSTATUS.NOCHANGE) {
+            res.sendStatus(HttpStatusCode.AlreadyReported);
+        } else {
+            res.sendStatus(HttpStatusCode.Ok);
         }
-        res.status(status).send(response);
     } catch (e) {
         console.log(e as Error);
         res.status(HttpStatusCode.InternalServerError).send(e);

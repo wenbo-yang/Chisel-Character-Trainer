@@ -1,6 +1,6 @@
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import { IConfig, TrainResponse, TrainingData } from '../types/trainerTypes';
+import { IConfig, TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
 import { Config } from '../config';
 import { v5 as uuidv5 } from 'uuid';
 
@@ -15,7 +15,7 @@ export class CharacterTrainingModel {
         this.characterTrainingDataStorage = characterTrainingDataStorage || new CharacterTrainingDataStorage(this.config);
     }
 
-    public async storeTrainingData(character: string, uncompressedData: string[], compressedData: string[]): Promise<TrainResponse> {
+    public async storeTrainingData(character: string, uncompressedData: string[], compressedData: string[]): Promise<TRAININGSTATUS> {
         // ensure data size //
         // will implement later
         if (uncompressedData.find((d) => d.split('\n').length !== this.config.trainingDataHeight || d.split('\n')[0].length !== this.config.trainingDataWidth)) {
@@ -37,8 +37,7 @@ export class CharacterTrainingModel {
         };
 
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
-        const modelStatus = await this.characterModelStorage.getModelTrainingExecution(newDataSaved);
 
-        return modelStatus;
+        return newDataSaved ? TRAININGSTATUS.CREATED : TRAININGSTATUS.NOCHANGE;
     }
 }

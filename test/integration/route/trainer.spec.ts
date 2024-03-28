@@ -24,12 +24,14 @@ describe('skeletonize request', () => {
     describe('training character', () => {
         describe('POST /uploadTrainingData', () => {
             const uploadTrainingDataUrl = httpsUrl + '/uploadTrainingData';
-
-            beforeAll(() => {
+            let data: any;
+            beforeAll(async () => {
                 process.env.NODE_ENV = 'development';
+                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                data = JSON.parse((await fs.readFile(dataUrl)).toString());
             });
 
-            afterAll(() => {
+            afterEach(() => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
                 const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
@@ -45,37 +47,48 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke]
+                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
-                expect(response.data.executionId).toBeDefined();
                 expect(response.status).toEqual(HttpStatusCode.Created);
             });
 
             it('should respond with 201 created with new data request of the same character', async () => {
-                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
-                const data = JSON.parse((await fs.readFile(dataUrl)).toString());
-
-                let response = await axiosClient.post(uploadTrainingDataUrl, {
+                const firstResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke]
+                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
-                const originalExecutionId = response.data.executionId;
-
-                response = await axiosClient.post(uploadTrainingDataUrl, {
+                const secondResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.skeleton]
+                    data: [data.skeleton],
                 });
 
-                expect(originalExecutionId).toBeDefined();
-                expect(response.data.executionId).toBeDefined();
-                expect(response.data.executionId).not.toEqual(originalExecutionId);
-                expect(response.status).toEqual(HttpStatusCode.Created);
+                expect(firstResponse.status).toEqual(HttpStatusCode.Created);
+                expect(secondResponse.status).toEqual(HttpStatusCode.Created);
+            });
+
+            it('should respond with 208 AlreadyReported when sending same data of the same character', async () => {
+                const firstResponse = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                const secondResponse = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                expect(firstResponse.status).toEqual(HttpStatusCode.Created);
+                expect(secondResponse.status).toEqual(HttpStatusCode.AlreadyReported);
             });
         });
     });

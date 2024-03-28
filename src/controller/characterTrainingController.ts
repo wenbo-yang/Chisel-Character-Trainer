@@ -3,7 +3,7 @@ import { ParsedQs } from 'qs';
 import { Config } from '../config';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
 import { gzip, ungzip } from 'node-gzip';
-import { COMPRESSIONTYPE, IConfig, TRAININGDATATYPE, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
+import { COMPRESSIONTYPE, IConfig, TRAININGDATATYPE, TRAININGSTATUS, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
 
 export class CharacterTrainingController {
     private config: IConfig;
@@ -14,7 +14,7 @@ export class CharacterTrainingController {
         this.characterTrainingModel = characterTrainingModel || new CharacterTrainingModel(this.config);
     }
 
-    public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainResponse> {
+    public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TRAININGSTATUS> {
         const requestBody = req.body as TrainRequestBody;
         let uncompressedData: string[] = [];
         let compressedData: string[] = [];
@@ -26,9 +26,9 @@ export class CharacterTrainingController {
             throw new Error('DataType other than BINARYSTRINGWITHNEWLINE are NOT IMPLEMENTED!!!');
         }
 
-        const response = await this.characterTrainingModel.storeTrainingData(requestBody.character, uncompressedData, compressedData);
+        const trainingStatus = await this.characterTrainingModel.storeTrainingData(requestBody.character, uncompressedData, compressedData);
 
-        return response;
+        return trainingStatus;
     }
 
     private async getDecompressedData(requestBody: TrainRequestBody): Promise<string[]> {
