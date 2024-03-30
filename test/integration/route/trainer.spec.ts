@@ -23,7 +23,7 @@ describe('skeletonize request', () => {
 
     describe('training character', () => {
         describe('POST /uploadTrainingData', () => {
-            const uploadTrainingDataUrl = httpsUrl + '/uploadTrainingData';
+            const uploadTrainingDataUrl = httpsUrl + '/trainingData';
             let data: any;
             beforeAll(async () => {
                 process.env.NODE_ENV = 'development';

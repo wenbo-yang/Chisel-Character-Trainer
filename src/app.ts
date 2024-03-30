@@ -27,7 +27,7 @@ app.get('/healthCheck', (req, res) => {
     res.send('i am healthy!!!');
 });
 
-app.post('/uploadTrainingData', async (req, res) => {
+app.post('/trainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
         const trainingStatus = await characterTrainingController.uploadTrainingData(req);
