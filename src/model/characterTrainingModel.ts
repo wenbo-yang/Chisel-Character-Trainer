@@ -38,6 +38,8 @@ export class CharacterTrainingModel {
 
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
 
+        await this.characterModelStorage.getModelTrainingExecution(newDataSaved);
+
         return newDataSaved ? TRAININGSTATUS.CREATED : TRAININGSTATUS.NOCHANGE;
     }
 }

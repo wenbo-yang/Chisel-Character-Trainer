@@ -45,6 +45,18 @@ app.post('/uploadTrainingData', async (req, res) => {
     }
 });
 
+app.post('/train', async (req, res) => {
+    throw new Error('NOT IMPLEMENTED');
+});
+
+app.get('/getModelTrainingStatus/:executionId', async (req, res) => {
+    throw new Error('NOT IMPLEMENTED');
+});
+
+app.get('/getLatestModel', async (req, res) => {
+    throw new Error('NOT IMPLEMENTED');
+});
+
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
 
