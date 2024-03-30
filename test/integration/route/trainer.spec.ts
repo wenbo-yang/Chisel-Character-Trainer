@@ -22,7 +22,7 @@ describe('skeletonize request', () => {
     });
 
     describe('training character', () => {
-        describe('POST /uploadTrainingData', () => {
+        describe('POST /trainingData', () => {
             const uploadTrainingDataUrl = httpsUrl + '/trainingData';
             let data: any;
             beforeAll(async () => {
