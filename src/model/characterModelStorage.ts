@@ -16,7 +16,9 @@ export class CharacterModelStorage {
         throw new Error('getCharacterModel Not Implemented');
     }
 
-    public async getModelTrainingExecution(dataSaved: boolean): Promise<ModelTrainingExecution> {
-        return dataSaved ? await this.characterModelStorageDao.initiateTraining() : await this.characterModelStorageDao.getLastestModel();
+    public async trainNewModel(dataSaved: boolean): Promise<void> {
+        if (dataSaved) {
+            await this.characterModelStorageDao.initiateTraining();
+        }
     }
 }

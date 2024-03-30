@@ -49,11 +49,11 @@ app.post('/train', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 
-app.get('/getModelTrainingStatus/:executionId', async (req, res) => {
+app.get('/modelStatus/:executionId', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 
-app.get('/getLatestModel', async (req, res) => {
+app.get('/model', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 
