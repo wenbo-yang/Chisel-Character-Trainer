@@ -42,9 +42,7 @@ app.post('/trainingData', async (req, res) => {
 app.post('/train', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const trainingExecution = await characterTrainingController.trainModel(req);
-
-        res.status(HttpStatusCode.Created).send(trainingExecution);
+        await characterTrainingController.trainModel(req, res);
     } catch (e) {
         console.log(e as Error);
         res.status(HttpStatusCode.InternalServerError).send(e);

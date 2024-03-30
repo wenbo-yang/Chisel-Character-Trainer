@@ -1,4 +1,4 @@
-import { Request } from 'express-serve-static-core';
+import { Request, Response } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import { Config } from '../config';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
@@ -39,8 +39,8 @@ export class CharacterTrainingController {
         return responseCode;
     }
 
-    public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainModelResponse> {
-        
+    public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
+        this.characterTrainingModel.hasNewData();
     }
 
     private async getDecompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {

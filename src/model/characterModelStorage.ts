@@ -19,4 +19,8 @@ export class CharacterModelStorage {
     public async initiateTraining(): Promise<ModelTrainingExecution> {
         return await this.characterModelStorageDao.initiateTraining();
     }
+
+    public async newDataSaved(): Promise<void> {
+        await this.characterModelStorageDao.newDataSaved();
+    }
 }
