@@ -30,15 +30,9 @@ app.get('/healthCheck', (req, res) => {
 app.post('/trainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const trainingStatus = await characterTrainingController.uploadTrainingData(req);
+        const trainingDataStatus = await characterTrainingController.uploadTrainingData(req);
 
-        if (trainingStatus === TRAININGSTATUS.CREATED) {
-            res.sendStatus(HttpStatusCode.Created);
-        } else if (trainingStatus === TRAININGSTATUS.NOCHANGE) {
-            res.sendStatus(HttpStatusCode.AlreadyReported);
-        } else {
-            res.sendStatus(HttpStatusCode.Ok);
-        }
+        res.sendStatus(trainingDataStatus);
     } catch (e) {
         console.log(e as Error);
         res.status(HttpStatusCode.InternalServerError).send(e);
@@ -46,7 +40,15 @@ app.post('/trainingData', async (req, res) => {
 });
 
 app.post('/train', async (req, res) => {
-    throw new Error('NOT IMPLEMENTED');
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        const trainingExecution = await characterTrainingController.trainModel(req);
+
+        res.status(HttpStatusCode.Created).send(trainingExecution);
+    } catch (e) {
+        console.log(e as Error);
+        res.status(HttpStatusCode.InternalServerError).send(e);
+    }
 });
 
 app.get('/modelStatus/:executionId', async (req, res) => {

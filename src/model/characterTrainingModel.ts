@@ -1,6 +1,6 @@
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import { IConfig, TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
+import { IConfig, TRAININGSTATUS, TrainingData } from '../types/trainerTypes';
 import { Config } from '../config';
 import { v5 as uuidv5 } from 'uuid';
 
@@ -37,8 +37,6 @@ export class CharacterTrainingModel {
         };
 
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
-        await this.characterModelStorage.trainNewModel(newDataSaved);
-
         return newDataSaved ? TRAININGSTATUS.CREATED : TRAININGSTATUS.NOCHANGE;
     }
 }

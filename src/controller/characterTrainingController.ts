@@ -3,7 +3,8 @@ import { ParsedQs } from 'qs';
 import { Config } from '../config';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
 import { gzip, ungzip } from 'node-gzip';
-import { COMPRESSIONTYPE, IConfig, TRAININGDATATYPE, TRAININGSTATUS, TrainRequestBody, TrainResponse } from '../types/trainerTypes';
+import { COMPRESSIONTYPE, IConfig, TRAININGDATATYPE, TRAININGSTATUS, TrainModelResponse, UploadTrainingDataRequestBody } from '../types/trainerTypes';
+import { HttpStatusCode } from 'axios';
 
 export class CharacterTrainingController {
     private config: IConfig;
@@ -14,8 +15,8 @@ export class CharacterTrainingController {
         this.characterTrainingModel = characterTrainingModel || new CharacterTrainingModel(this.config);
     }
 
-    public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TRAININGSTATUS> {
-        const requestBody = req.body as TrainRequestBody;
+    public async uploadTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<HttpStatusCode> {
+        const requestBody = req.body as UploadTrainingDataRequestBody;
         let uncompressedData: string[] = [];
         let compressedData: string[] = [];
         if (requestBody.dataType === TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE) {
@@ -26,12 +27,23 @@ export class CharacterTrainingController {
             throw new Error('DataType other than BINARYSTRINGWITHNEWLINE are NOT IMPLEMENTED!!!');
         }
 
-        const trainingStatus = await this.characterTrainingModel.storeTrainingData(requestBody.character, uncompressedData, compressedData);
+        const trainingDataStatus = await this.characterTrainingModel.storeTrainingData(requestBody.character, uncompressedData, compressedData);
 
-        return trainingStatus;
+        let responseCode = HttpStatusCode.Ok;
+        if (trainingDataStatus === TRAININGSTATUS.CREATED) {
+            responseCode = HttpStatusCode.Created;
+        } else if (trainingDataStatus === TRAININGSTATUS.NOCHANGE) {
+            responseCode = HttpStatusCode.AlreadyReported;
+        }
+
+        return responseCode;
     }
 
-    private async getDecompressedData(requestBody: TrainRequestBody): Promise<string[]> {
+    public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainModelResponse> {
+        throw new Error('Not implemented');
+    }
+
+    private async getDecompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {
         const data: string[] = [];
         if (requestBody.compression === COMPRESSIONTYPE.GZIP) {
             for (let i = 0; i < requestBody.data.length; i++) {
@@ -45,7 +57,7 @@ export class CharacterTrainingController {
         return requestBody.data;
     }
 
-    private async getCompressedData(requestBody: TrainRequestBody): Promise<string[]> {
+    private async getCompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {
         const data: string[] = [];
         if (requestBody.compression === COMPRESSIONTYPE.PLAIN) {
             for (let i = 0; i < requestBody.data.length; i++) {

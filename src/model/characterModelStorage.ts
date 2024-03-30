@@ -15,10 +15,4 @@ export class CharacterModelStorage {
     public async getCharacterModel(): Promise<INeuralNetworkJSON> {
         throw new Error('getCharacterModel Not Implemented');
     }
-
-    public async trainNewModel(dataSaved: boolean): Promise<void> {
-        if (dataSaved) {
-            await this.characterModelStorageDao.initiateTraining();
-        }
-    }
 }
