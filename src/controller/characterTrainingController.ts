@@ -40,7 +40,7 @@ export class CharacterTrainingController {
     }
 
     public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<TrainModelResponse> {
-        throw new Error('Not implemented');
+        
     }
 
     private async getDecompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {
