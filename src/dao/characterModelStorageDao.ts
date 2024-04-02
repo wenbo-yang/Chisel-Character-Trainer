@@ -1,13 +1,17 @@
-import { ModelTrainingExecution } from '../types/trainerTypes';
+import { ModelTrainingExecution, TRAININGSTATUS } from '../types/trainerTypes';
 
 export abstract class CharacterModelStorageDao {
     constructor() {}
 
-    public async getLastestModel(): Promise<ModelTrainingExecution> {
+    public async getLatestModel(): Promise<ModelTrainingExecution> {
         throw new Error('getLastestModel Abstract class');
     }
 
-    public async initiateTraining(): Promise<ModelTrainingExecution> {
+    public async getLatestModelByStatus(status: TRAININGSTATUS): Promise<ModelTrainingExecution | undefined> {
+        throw new Error('getLastestModel Abstract class');
+    }
+
+    public async createTrainingSession(): Promise<ModelTrainingExecution> {
         throw new Error('initiateTraining Abstract class');
     }
 
@@ -17,5 +21,9 @@ export abstract class CharacterModelStorageDao {
 
     public async deleteSelectedTrainingExecution(executionId: string): Promise<void> {
         throw new Error('deleteTrainingExecutions Abstract class');
+    }
+
+    public async changeTrainingModelStatus(executionId: string, INPROGRESS: TRAININGSTATUS): Promise<ModelTrainingExecution> {
+        throw new Error('Method not implemented.');
     }
 }

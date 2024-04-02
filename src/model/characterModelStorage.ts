@@ -1,6 +1,6 @@
 import { INeuralNetworkJSON } from 'brain.js/dist/neural-network';
 import { Config } from '../config';
-import { IConfig, ModelTrainingExecution, TrainModelResponse } from '../types/trainerTypes';
+import { IConfig, ModelTrainingExecution, TRAININGSTATUS, TrainModelResponse } from '../types/trainerTypes';
 import { CharacterModelStorageDao } from '../dao/characterModelStorageDao';
 import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
 
@@ -16,11 +16,17 @@ export class CharacterModelStorage {
         throw new Error('getCharacterModel Not Implemented');
     }
 
-    public async initiateTraining(): Promise<ModelTrainingExecution> {
-        return await this.characterModelStorageDao.initiateTraining();
+    public async createTrainingSession(): Promise<ModelTrainingExecution> {
+        return await this.characterModelStorageDao.createTrainingSession();
     }
 
-    public async newDataSaved(): Promise<void> {
-        await this.characterModelStorageDao.newDataSaved();
+    public async startModelTraining(): Promise<ModelTrainingExecution> {
+        const latestModel = await this.characterModelStorageDao.getLatestModel();
+
+        if (latestModel.status === TRAININGSTATUS.FINISHED) {
+            return latestModel;
+        }
+
+        return await this.characterModelStorageDao.changeTrainingModelStatus(latestModel.executionId, TRAININGSTATUS.INPROGRESS);
     }
 }

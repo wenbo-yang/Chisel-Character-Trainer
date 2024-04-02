@@ -1,3 +1,5 @@
+import { SavedTrainingData } from '../types/trainerTypes';
+
 export abstract class CharacterTrainingDataStorageDao {
     constructor() {}
 
@@ -7,6 +9,10 @@ export abstract class CharacterTrainingDataStorageDao {
 
     public async saveData(character: string, newData: Map<string, string>): Promise<void> {
         throw new Error('saveData Abstract class');
+    }
+
+    public async getAllTrainingData(): Promise<SavedTrainingData[]> {
+        throw new Error('getAllTrainingData Abstract class');
     }
 
     public async deleteAllTrainingData(): Promise<void> {

@@ -40,7 +40,7 @@ export class CharacterTrainingController {
     }
 
     public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
-        this.characterTrainingModel.hasNewData();
+        throw new Error('Not Implmented');
     }
 
     private async getDecompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {

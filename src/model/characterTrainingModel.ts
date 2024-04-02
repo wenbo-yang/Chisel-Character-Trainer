@@ -3,6 +3,9 @@ import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
 import { IConfig, ModelTrainingExecution, TRAININGSTATUS, TrainModelResponse, TrainingData } from '../types/trainerTypes';
 import { Config } from '../config';
 import { v5 as uuidv5 } from 'uuid';
+import { NeuralNetwork } from 'brain.js';
+import { ungzip } from 'node-gzip';
+import { INeuralNetworkData, INeuralNetworkDatum } from 'brain.js/dist/neural-network';
 
 export class CharacterTrainingModel {
     private config: IConfig;
@@ -39,14 +42,40 @@ export class CharacterTrainingModel {
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
 
         if (newDataSaved) {
-            this.characterModelStorage.newDataSaved();
+            await this.characterModelStorage.createTrainingSession();
             return TRAININGSTATUS.CREATED;
         }
 
         return TRAININGSTATUS.NOCHANGE;
     }
 
-    public async trainModel(): Promise<ModelTrainingExecution> {
-        return await this.characterModelStorage.initiateTraining();
+    public async startModelTraining(): Promise<ModelTrainingExecution> {
+        return await this.characterModelStorage.startModelTraining();
+    }
+
+    public async trainModel(executionId: string): Promise<void> {
+        const savedTrainingData = await this.characterTrainingDataStorage.getAllTrainingData();
+
+        const net = new NeuralNetwork();
+
+        const trainingData: Array<INeuralNetworkDatum<INeuralNetworkData, INeuralNetworkData>> = [];
+
+        for (let i = 0; i < savedTrainingData.length; i++) {
+            for (let j = 0; j < savedTrainingData[i].data.length; j++) {
+                const processedData = await this.processSavedData(savedTrainingData[i].data[j][1]); // note data[j][0] is the key
+
+                let output: any = {};
+                output[savedTrainingData[i].character] = 1;
+                let input: INeuralNetworkData = processedData;
+                trainingData.push({ input, output });
+            }
+        }
+
+        await net.trainAsync(trainingData);
+    }
+
+    private async processSavedData(data: string): Promise<number[]> {
+        const zeroOneArray = (await ungzip(Buffer.from(data, 'base64'))).toString().replace('\n', '').split('');
+        return zeroOneArray.map((c) => (c === '1' ? 1 : 0));
     }
 }

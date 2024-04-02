@@ -26,9 +26,37 @@ describe('prototyping', () => {
     );
 
     // prettier-ignore
+    const a1 = character(
+        '....###....' +
+        '  ### ###  ' +
+        '###     ###' +
+        '###     ###' +
+        '###########' +
+        '###########' +
+        '###     ###' +
+        '###     ###' +
+        '###     ###' + 
+        '###     ###'
+    );
+
+    // prettier-ignore
     const b = character(
         '#######    ' +
         '########## ' +
+        '###     ###' +
+        '###     ## ' +
+        '#########  ' +
+        '#########  ' +
+        '###.....## ' +
+        '###.....###' +
+        '########## ' + 
+        '#########..'
+    );
+
+    // prettier-ignore
+    const b1 = character(
+        '#######    ' +
+        '#### ##### ' +
         '###     ###' +
         '###     ## ' +
         '#########  ' +
@@ -112,6 +140,39 @@ describe('prototyping', () => {
         newNet.fromJSON(netOutput);
 
         expect(likely(testChar, newNet)).toBe('b');
+    });
+
+    it('can recognize character with multiple training data', () => {
+        const net = new NeuralNetwork();
+        net.train([
+            { input: a, output: { a: 1 } },
+            { input: a1, output: { a: 1 } },
+            { input: b, output: { b: 1 } },
+            { input: b1, output: { b: 1 } },
+            { input: c, output: { c: 1 } },
+        ]);
+
+        expect(likely(testChar, net)).toBe('b');
+    });
+
+    it('can recognize character with multiple array data declared outside of main training data array', () => {
+        const net = new NeuralNetwork();
+
+        const data = [
+            { input: a, output: { a: 1 } },
+            { input: a1, output: { a: 1 } },
+            { input: c, output: { c: 1 } },
+        ];
+
+        let input = b;
+        let output: any = {};
+        output['b'] = 1;
+
+        data.push({ input, output });
+
+        net.train(data);
+
+        expect(likely(testChar, net)).toBe('b');
     });
 
     it('gzip and unzip string', async () => {
