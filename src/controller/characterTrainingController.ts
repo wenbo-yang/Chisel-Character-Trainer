@@ -40,7 +40,14 @@ export class CharacterTrainingController {
     }
 
     public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
-        throw new Error('Not Implmented');
+        const modelTrainingExecution = await this.characterTrainingModel.startModelTraining();
+        if (modelTrainingExecution.status === TRAININGSTATUS.FINISHED) {
+            res.status(HttpStatusCode.AlreadyReported).json(modelTrainingExecution);
+        } else {
+            res.status(HttpStatusCode.Created).json(modelTrainingExecution);
+        }
+
+        await this.characterTrainingModel.trainModel(modelTrainingExecution.executionId);
     }
 
     private async getDecompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {

@@ -1,3 +1,4 @@
+import { INeuralNetworkJSON } from 'brain.js/dist/neural-network';
 import { ModelTrainingExecution, TRAININGSTATUS } from '../types/trainerTypes';
 
 export abstract class CharacterModelStorageDao {
@@ -24,6 +25,10 @@ export abstract class CharacterModelStorageDao {
     }
 
     public async changeTrainingModelStatus(executionId: string, INPROGRESS: TRAININGSTATUS): Promise<ModelTrainingExecution> {
-        throw new Error('Method not implemented.');
+        throw new Error('changeTrainingModelStatus Abstract class');
+    }
+
+    public async saveModel(executionId: string, modelToBeSaved: INeuralNetworkJSON): Promise<void> {
+        throw new Error('saveModel Abstract class');
     }
 }

@@ -29,4 +29,8 @@ export class CharacterModelStorage {
 
         return await this.characterModelStorageDao.changeTrainingModelStatus(latestModel.executionId, TRAININGSTATUS.INPROGRESS);
     }
+
+    public async saveModel(executionId: string, modelToBeSaved: INeuralNetworkJSON): Promise<void> {
+        await this.characterModelStorageDao.saveModel(executionId, modelToBeSaved);
+    }
 }

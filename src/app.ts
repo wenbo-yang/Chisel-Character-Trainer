@@ -39,7 +39,7 @@ app.post('/trainingData', async (req, res) => {
     }
 });
 
-app.post('/train', async (req, res) => {
+app.post('/trainModel', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
         await characterTrainingController.trainModel(req, res);
@@ -54,6 +54,10 @@ app.get('/modelStatus/:executionId', async (req, res) => {
 });
 
 app.get('/model', async (req, res) => {
+    throw new Error('NOT IMPLEMENTED');
+});
+
+app.get('/models', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 

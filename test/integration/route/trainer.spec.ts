@@ -2,8 +2,9 @@ import { httpsUrl, integrationTestConfig } from '../utils';
 import axios, { HttpStatusCode } from 'axios';
 import https from 'https';
 import fs from 'fs/promises';
-import { COMPRESSIONTYPE, TRAININGDATATYPE } from '../../../src/types/trainerTypes';
+import { COMPRESSIONTYPE, ModelTrainingExecution, TRAININGDATATYPE, TRAININGSTATUS } from '../../../src/types/trainerTypes';
 import { CharacterStorageDaoFactory } from '../../../src/dao/characterStorageDaoFactory';
+import exp from 'constants';
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -89,6 +90,42 @@ describe('skeletonize request', () => {
 
                 expect(firstResponse.status).toEqual(HttpStatusCode.Created);
                 expect(secondResponse.status).toEqual(HttpStatusCode.AlreadyReported);
+            });
+        });
+
+        describe('POST /trainModel', () => {
+            const uploadTrainingDataUrl = httpsUrl + '/trainingData';
+            const trainModelUrl = httpsUrl + '/trainModel';
+
+            let data: any;
+            beforeAll(async () => {
+                process.env.NODE_ENV = 'development';
+                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                data = JSON.parse((await fs.readFile(dataUrl)).toString());
+            });
+
+            afterEach(() => {
+                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
+                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
+
+                modelStorage.deleteAllTrainingExecutions();
+                trainingDataStroage.deleteAllTrainingData();
+            });
+
+            it('test123 should respond with with 201 created when request train a new model', async () => {
+                const response = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [data.skeleton, data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                expect(response.status).toEqual(HttpStatusCode.Created);
+
+                const trainModelResponse = await axiosClient.post(trainModelUrl, {});
+
+                expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
+                expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
             });
         });
     });
