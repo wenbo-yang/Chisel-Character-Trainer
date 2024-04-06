@@ -90,7 +90,7 @@ describe('prototyping', () => {
         ' ########  ' +
         ' #       # ' +
         ' # ..... # ' +
-        ' # .....  #' +
+        ' # ..... # ' +
         ' # ##### # ' + 
         '...........'
     );
@@ -135,7 +135,6 @@ describe('prototyping', () => {
         expect(likely(testChar, net)).toBe('b');
 
         const netOutput = net.toJSON();
-
         const newNet = new NeuralNetwork();
         newNet.fromJSON(netOutput);
 
