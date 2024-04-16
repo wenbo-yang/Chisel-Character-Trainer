@@ -42,9 +42,9 @@ export class CharacterTrainingController {
     public async trainModel(req: Request<{}, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
         const modelTrainingExecution = await this.characterTrainingModel.startModelTraining();
         if (modelTrainingExecution.status === TRAININGSTATUS.FINISHED) {
-            res.status(HttpStatusCode.AlreadyReported).json(modelTrainingExecution);
+            res.status(HttpStatusCode.AlreadyReported).send(modelTrainingExecution);
         } else {
-            res.status(HttpStatusCode.Created).json(modelTrainingExecution);
+            res.status(HttpStatusCode.Created).send(modelTrainingExecution);
         }
 
         await this.characterTrainingModel.trainModel(modelTrainingExecution.executionId);

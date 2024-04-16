@@ -24,11 +24,11 @@ export class Config implements IConfig {
     }
 
     public get trainingDataHeight(): number {
-        return 80;
+        return 50;
     }
 
     public get trainingDataWidth(): number {
-        return 80;
+        return 40;
     }
 
     public get storageUrl(): string {

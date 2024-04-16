@@ -4,7 +4,8 @@ import https from 'https';
 import fs from 'fs/promises';
 import { COMPRESSIONTYPE, ModelTrainingExecution, TRAININGDATATYPE, TRAININGSTATUS } from '../../../src/types/trainerTypes';
 import { CharacterStorageDaoFactory } from '../../../src/dao/characterStorageDaoFactory';
-import exp from 'constants';
+import * as fsSync from 'fs';
+import path from 'path';
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -28,7 +29,7 @@ describe('skeletonize request', () => {
             let data: any;
             beforeAll(async () => {
                 process.env.NODE_ENV = 'development';
-                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                const dataUrl = './test/integration/data/test_data_for_character_training.json';
                 data = JSON.parse((await fs.readFile(dataUrl)).toString());
             });
 
@@ -41,14 +42,14 @@ describe('skeletonize request', () => {
             });
 
             it('should respond with 201 created with new train request', async () => {
-                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                const dataUrl = './test/integration/data/test_data_for_character_training.json';
                 const data = JSON.parse((await fs.readFile(dataUrl)).toString());
 
                 const response = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(response.status).toEqual(HttpStatusCode.Created);
@@ -59,14 +60,14 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 const secondResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.skeleton],
+                    data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke],
                 });
 
                 expect(firstResponse.status).toEqual(HttpStatusCode.Created);
@@ -78,14 +79,14 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 const secondResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(firstResponse.status).toEqual(HttpStatusCode.Created);
@@ -100,7 +101,7 @@ describe('skeletonize request', () => {
             let data: any;
             beforeAll(async () => {
                 process.env.NODE_ENV = 'development';
-                const dataUrl = './test/integration/data/skeletonized_data_for_character_training_test.json';
+                const dataUrl = './test/integration/data/test_data_for_character_training.json';
                 data = JSON.parse((await fs.readFile(dataUrl)).toString());
             });
 
@@ -112,12 +113,12 @@ describe('skeletonize request', () => {
                 trainingDataStroage.deleteAllTrainingData();
             });
 
-            it('test123 should respond with with 201 created when request train a new model', async () => {
+            it('should respond with with 201 created when request train a new model', async () => {
                 const response = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.skeleton, data.strokes.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke, data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(response.status).toEqual(HttpStatusCode.Created);
