@@ -1,6 +1,6 @@
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import { IConfig, ModelTrainingExecution, TRAININGSTATUS, TrainModelResponse, TrainingData } from '../types/trainerTypes';
+import { IConfig, ModelTrainingExecution, TRAININGSTATUS, TrainingData } from '../types/trainerTypes';
 import { Config } from '../config';
 import { v5 as uuidv5 } from 'uuid';
 import { NeuralNetwork } from 'brain.js';
@@ -77,7 +77,19 @@ export class CharacterTrainingModel {
     }
 
     private async processSavedData(data: string): Promise<number[]> {
-        const zeroOneArray = (await ungzip(Buffer.from(data, 'base64'))).toString().replace('\n', '').split('');
-        return zeroOneArray.map((c) => (c === '1' ? 1 : 0));
+        const zeroOneString = (await ungzip(Buffer.from(data, 'base64'))).toString();
+
+        const zeroOneArray: number[] = [];
+
+        for (let i = 0; i < zeroOneString.length; i++) {
+            const c = zeroOneString.charAt(i);
+            if (c === '1') {
+                zeroOneArray.push(1);
+            } else if (c === '0') {
+                zeroOneArray.push(0);
+            }
+        }
+
+        return zeroOneArray;
     }
 }

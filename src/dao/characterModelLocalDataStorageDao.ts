@@ -18,7 +18,7 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
     public override async getLatestModel(): Promise<ModelTrainingExecution> {
         const executions = await this.getExecutions();
 
-        return executions.length > 0 ? executions[0] : this.notFoundError();
+        return executions.length > 0 ? executions[0] : this.notFoundError('executions are not found');
     }
 
     public override async getLatestModelByStatus(status: TRAININGSTATUS): Promise<ModelTrainingExecution | undefined> {
@@ -59,9 +59,7 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         }
 
         const targetExecution = JSON.parse((await fs.readFile(targetFilePath)).toString()) as ModelTrainingExecution;
-
         const execution = { ...targetExecution, status };
-
         await fs.writeFile(targetFilePath, JSON.stringify(execution));
 
         return execution;
@@ -74,14 +72,16 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
     public override async saveModel(executionId: string, modelToBeSaved: INeuralNetworkJSON): Promise<void> {
         const targetFilePath = path.join(this.folderPath, executionId + '.json');
         if (!fsSync.existsSync(targetFilePath)) {
-            this.notFoundError();
+            this.notFoundError('SaveModel: execution is not found');
         }
 
+        const targetModelFilePath = path.join(this.folderPath, executionId + '_model_' + '.json');
+        await fs.writeFile(targetModelFilePath, JSON.stringify(modelToBeSaved));
+
         const targetExecution = JSON.parse((await fs.readFile(targetFilePath)).toString()) as ModelTrainingExecution;
-
-        targetExecution.model = modelToBeSaved;
+        targetExecution.modelPath = targetModelFilePath;
         targetExecution.status = TRAININGSTATUS.FINISHED;
-
+        targetExecution.updated = Date.now();
         await fs.writeFile(targetFilePath, JSON.stringify(targetExecution));
     }
 
@@ -108,7 +108,7 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         return executions;
     }
 
-    private notFoundError(): ModelTrainingExecution {
-        throw new Error('Not Found');
+    private notFoundError(postfixMessage?: string): ModelTrainingExecution {
+        throw new Error('Not Found' + postfixMessage ? ': ' + postfixMessage : '');
     }
 }

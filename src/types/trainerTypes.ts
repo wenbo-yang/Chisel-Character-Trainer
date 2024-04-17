@@ -9,7 +9,7 @@ export interface ModelTrainingExecution {
     executionId: string;
     updated: number;
     status: TRAININGSTATUS;
-    model?: any;
+    modelPath?: any;
 }
 
 export type TrainModelResponse = ModelTrainingExecution;
