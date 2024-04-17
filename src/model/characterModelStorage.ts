@@ -33,4 +33,8 @@ export class CharacterModelStorage {
     public async saveModel(executionId: string, modelToBeSaved: INeuralNetworkJSON): Promise<void> {
         await this.characterModelStorageDao.saveModel(executionId, modelToBeSaved);
     }
+
+    public async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
+        return await this.characterModelStorageDao.getModelTrainingExecution(executionId);
+    }
 }

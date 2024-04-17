@@ -1,9 +1,9 @@
 import { Config } from '../config';
-import { IConfig, ModelTrainingExecution, TRAININGSTATUS } from '../types/trainerTypes';
+import { IConfig, ModelTrainingExecution, NotFoundError, TRAININGSTATUS } from '../types/trainerTypes';
 import { CharacterModelStorageDao } from './characterModelStorageDao';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs/promises';
-import fsSync, { Mode } from 'fs';
+import fsSync from 'fs';
 import path from 'path';
 import { deleteAllFilesInFolder } from './daoUtils';
 import { INeuralNetworkJSON } from 'brain.js/dist/neural-network';
@@ -85,6 +85,15 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         await fs.writeFile(targetFilePath, JSON.stringify(targetExecution));
     }
 
+    public override async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
+        const targetFilePath = path.join(this.folderPath, executionId + '.json');
+        if (!fsSync.existsSync(targetFilePath)) {
+            this.notFoundError('getModelTrainingExecution: execution is not found');
+        }
+
+        return JSON.parse((await fs.readFile(targetFilePath)).toString()) as ModelTrainingExecution;
+    }
+
     private get folderPath(): string {
         return path.join(this.config.storageUrl, '/model');
     }
@@ -109,6 +118,6 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
     }
 
     private notFoundError(postfixMessage?: string): ModelTrainingExecution {
-        throw new Error('Not Found' + postfixMessage ? ': ' + postfixMessage : '');
+        throw new NotFoundError('Not Found' + (postfixMessage ? ': ' + postfixMessage : ''));
     }
 }

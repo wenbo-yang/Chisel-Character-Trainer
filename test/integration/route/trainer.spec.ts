@@ -4,8 +4,7 @@ import https from 'https';
 import fs from 'fs/promises';
 import { COMPRESSIONTYPE, ModelTrainingExecution, TRAININGDATATYPE, TRAININGSTATUS } from '../../../src/types/trainerTypes';
 import { CharacterStorageDaoFactory } from '../../../src/dao/characterStorageDaoFactory';
-import * as fsSync from 'fs';
-import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 const axiosClient = axios.create({
     httpsAgent: new https.Agent({
@@ -105,28 +104,74 @@ describe('skeletonize request', () => {
                 data = JSON.parse((await fs.readFile(dataUrl)).toString());
             });
 
-            afterEach(() => {
+            afterEach(async () => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
                 const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
-                modelStorage.deleteAllTrainingExecutions();
-                trainingDataStroage.deleteAllTrainingData();
+                await modelStorage.deleteAllTrainingExecutions();
+                await trainingDataStroage.deleteAllTrainingData();
             });
 
             it('should respond with with 201 created when request train a new model', async () => {
-                const response = await axiosClient.post(uploadTrainingDataUrl, {
+                const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
                     data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke, data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
-                expect(response.status).toEqual(HttpStatusCode.Created);
-
+                expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
                 const trainModelResponse = await axiosClient.post(trainModelUrl, {});
 
                 expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
                 expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
+            });
+        });
+
+        describe('GET /modelExecution', () => {
+            const uploadTrainingDataUrl = httpsUrl + '/trainingData';
+            const trainModelUrl = httpsUrl + '/trainModel';
+            const getModelTrainingExecutionUrl = httpsUrl + '/modelExecution';
+
+            let data: any;
+            beforeAll(async () => {
+                process.env.NODE_ENV = 'development';
+                const dataUrl = './test/integration/data/test_data_for_character_training.json';
+                data = JSON.parse((await fs.readFile(dataUrl)).toString());
+            });
+
+            afterEach(async () => {
+                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
+                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
+
+                await modelStorage.deleteAllTrainingExecutions();
+                await trainingDataStroage.deleteAllTrainingData();
+            });
+
+            it(' should respond with 404 not found when trying to fiind an non-existing model', async () => {
+                const notExistingExecutionUrl = getModelTrainingExecutionUrl + '/' + uuidv4();
+                await expect(axiosClient.get(notExistingExecutionUrl)).rejects.toThrowError('Request failed with status code 404');
+            });
+
+            it('should respond with with 200 created when getting the status of an existing model', async () => {
+                const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke, data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
+
+                const trainModelResponse = await axiosClient.post(trainModelUrl, {});
+                expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
+                expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
+
+                const executionUrl = getModelTrainingExecutionUrl + '/' + (trainModelResponse.data as ModelTrainingExecution).executionId;
+                const getModelTrainingExecutionResponse = await axiosClient.get(executionUrl);
+
+                expect(getModelTrainingExecutionResponse.status).toEqual(HttpStatusCode.Ok);
+                expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
             });
         });
     });

@@ -69,3 +69,15 @@ export interface IConfig {
     env: string;
     servicePorts: ServicePorts;
 }
+
+export class NotFoundError extends Error {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export class DoNotRespondError extends Error {
+    constructor(e: Error) {
+        super(e.message);
+    }
+}

@@ -5,7 +5,7 @@ import fs from 'fs';
 import { Config } from './config';
 import { ControllerFactory } from './controller/controllerFactory';
 import { HttpStatusCode } from 'axios';
-import { TRAININGSTATUS } from './types/trainerTypes';
+import { processError } from './error';
 
 const config = new Config();
 
@@ -35,22 +35,30 @@ app.post('/trainingData', async (req, res) => {
         res.sendStatus(trainingDataStatus);
     } catch (e) {
         console.log(e as Error);
-        res.status(HttpStatusCode.InternalServerError).send(e);
+        processError(e, res);
     }
 });
 
 app.post('/trainModel', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        await characterTrainingController.trainModel(req, res);
+        await characterTrainingController.trainModel(res);
     } catch (e) {
         console.log(e as Error);
-        res.status(HttpStatusCode.InternalServerError).send(e);
+        processError(e, res);
     }
 });
 
-app.get('/modelStatus/:executionId', async (req, res) => {
-    throw new Error('NOT IMPLEMENTED');
+app.get('/modelExecution/:executionId', async (req, res) => {
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        const response = await characterTrainingController.getModelTrainingExecution(req);
+
+        return res.status(HttpStatusCode.Ok).send(response);
+    } catch (e) {
+        console.log(e as Error);
+        processError(e, res);
+    }
 });
 
 app.get('/model', async (req, res) => {

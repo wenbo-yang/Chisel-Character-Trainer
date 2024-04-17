@@ -31,4 +31,8 @@ export abstract class CharacterModelStorageDao {
     public async saveModel(executionId: string, modelToBeSaved: INeuralNetworkJSON): Promise<void> {
         throw new Error('saveModel Abstract class');
     }
+
+    public async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
+        throw new Error('getModelTrainingExecution Abstract class');
+    }
 }
