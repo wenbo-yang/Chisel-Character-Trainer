@@ -13,6 +13,8 @@ const axiosClient = axios.create({
 });
 
 describe('skeletonize request', () => {
+    const trainingDataUrl = './test/integration/data/test_data_for_character_training.json';
+
     describe('GET /healthCheck', () => {
         it('should respond with 200', async () => {
             const response = await axiosClient.get(httpsUrl + '/healthCheck');
@@ -28,8 +30,8 @@ describe('skeletonize request', () => {
             let data: any;
             beforeAll(async () => {
                 process.env.NODE_ENV = 'development';
-                const dataUrl = './test/integration/data/test_data_for_character_training.json';
-                data = JSON.parse((await fs.readFile(dataUrl)).toString());
+
+                data = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
             });
 
             afterEach(() => {
@@ -100,8 +102,7 @@ describe('skeletonize request', () => {
             let data: any;
             beforeAll(async () => {
                 process.env.NODE_ENV = 'development';
-                const dataUrl = './test/integration/data/test_data_for_character_training.json';
-                data = JSON.parse((await fs.readFile(dataUrl)).toString());
+                data = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
             });
 
             afterEach(async () => {
@@ -136,8 +137,7 @@ describe('skeletonize request', () => {
             let data: any;
             beforeAll(async () => {
                 process.env.NODE_ENV = 'development';
-                const dataUrl = './test/integration/data/test_data_for_character_training.json';
-                data = JSON.parse((await fs.readFile(dataUrl)).toString());
+                data = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
             });
 
             afterEach(async () => {
