@@ -13,7 +13,13 @@ const axiosClient = axios.create({
 });
 
 describe('skeletonize request', () => {
-    const trainingDataUrl = './test/integration/data/test_data_for_character_training.json';
+    const trainingDataUrl = './test/integration/data/test_data_for_character_training_running_man.json';
+    let trainingData: any;
+
+    beforeAll(async () => {
+        process.env.NODE_ENV = 'development';
+        trainingData = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
+    });
 
     describe('GET /healthCheck', () => {
         it('should respond with 200', async () => {
@@ -27,12 +33,6 @@ describe('skeletonize request', () => {
     describe('training character', () => {
         describe('POST /trainingData', () => {
             const uploadTrainingDataUrl = httpsUrl + '/trainingData';
-            let data: any;
-            beforeAll(async () => {
-                process.env.NODE_ENV = 'development';
-
-                data = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
-            });
 
             afterEach(() => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
@@ -43,14 +43,11 @@ describe('skeletonize request', () => {
             });
 
             it('should respond with 201 created with new train request', async () => {
-                const dataUrl = './test/integration/data/test_data_for_character_training.json';
-                const data = JSON.parse((await fs.readFile(dataUrl)).toString());
-
                 const response = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(response.status).toEqual(HttpStatusCode.Created);
@@ -61,14 +58,14 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 const secondResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'SKELETON').stroke],
                 });
 
                 expect(firstResponse.status).toEqual(HttpStatusCode.Created);
@@ -80,14 +77,14 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 const secondResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(firstResponse.status).toEqual(HttpStatusCode.Created);
@@ -98,12 +95,6 @@ describe('skeletonize request', () => {
         describe('POST /trainModel', () => {
             const uploadTrainingDataUrl = httpsUrl + '/trainingData';
             const trainModelUrl = httpsUrl + '/trainModel';
-
-            let data: any;
-            beforeAll(async () => {
-                process.env.NODE_ENV = 'development';
-                data = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
-            });
 
             afterEach(async () => {
                 const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
@@ -118,7 +109,7 @@ describe('skeletonize request', () => {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke, data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'SKELETON').stroke, trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
@@ -148,17 +139,17 @@ describe('skeletonize request', () => {
                 await trainingDataStroage.deleteAllTrainingData();
             });
 
-            it(' should respond with 404 not found when trying to fiind an non-existing model', async () => {
+            it(' should respond with 404 not found when trying to fiind an non-existing training execution', async () => {
                 const notExistingExecutionUrl = getModelTrainingExecutionUrl + '/' + uuidv4();
                 await expect(axiosClient.get(notExistingExecutionUrl)).rejects.toThrowError('Request failed with status code 404');
             });
 
-            it('should respond with with 200 created when getting the status of an existing model', async () => {
+            it('should respond with with 200 created when getting the status of an existing training execution', async () => {
                 const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
                     compression: COMPRESSIONTYPE.PLAIN,
-                    data: [data.transformedData.find((s: any) => s.type === 'SKELETON').stroke, data.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'SKELETON').stroke, trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
                 });
 
                 expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
@@ -172,6 +163,31 @@ describe('skeletonize request', () => {
 
                 expect(getModelTrainingExecutionResponse.status).toEqual(HttpStatusCode.Ok);
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
+            });
+
+            it('should respond with with 200 when getting the status of a finished execution', async () => {
+                const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'SKELETON').stroke, trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
+
+                const trainModelResponse = await axiosClient.post(trainModelUrl, {});
+                expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
+                expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
+
+                const executionUrl = getModelTrainingExecutionUrl + '/' + (trainModelResponse.data as ModelTrainingExecution).executionId;
+                let getModelTrainingExecutionResponse: any;
+
+                do {
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
+                    getModelTrainingExecutionResponse = await axiosClient.get(executionUrl);
+                } while ((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status === TRAININGSTATUS.INPROGRESS);
+
+                expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
             });
         });
     });
