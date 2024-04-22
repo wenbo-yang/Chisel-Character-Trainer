@@ -1,4 +1,4 @@
-export interface TrainRequestBody {
+export interface UploadTrainingDataRequestBody {
     character: string;
     dataType: TRAININGDATATYPE;
     compression: COMPRESSIONTYPE;
@@ -9,10 +9,10 @@ export interface ModelTrainingExecution {
     executionId: string;
     updated: number;
     status: TRAININGSTATUS;
-    model?: any;
+    modelPath?: any;
 }
 
-export type TrainResponse = ModelTrainingExecution;
+export type TrainModelResponse = ModelTrainingExecution;
 
 export enum TRAININGSTATUS {
     CREATED = 'CREATED',
@@ -68,4 +68,16 @@ export interface IConfig {
     storageUrl: string;
     env: string;
     servicePorts: ServicePorts;
+}
+
+export class NotFoundError extends Error {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export class DoNotRespondError extends Error {
+    constructor(e: Error) {
+        super(e.message);
+    }
 }

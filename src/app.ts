@@ -5,7 +5,7 @@ import fs from 'fs';
 import { Config } from './config';
 import { ControllerFactory } from './controller/controllerFactory';
 import { HttpStatusCode } from 'axios';
-import { TRAININGSTATUS } from './types/trainerTypes';
+import { processError } from './error';
 
 const config = new Config();
 
@@ -27,33 +27,45 @@ app.get('/healthCheck', (req, res) => {
     res.send('i am healthy!!!');
 });
 
-app.post('/uploadTrainingData', async (req, res) => {
+app.post('/trainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const trainingStatus = await characterTrainingController.uploadTrainingData(req);
+        const trainingDataStatus = await characterTrainingController.uploadTrainingData(req);
 
-        if (trainingStatus === TRAININGSTATUS.CREATED) {
-            res.sendStatus(HttpStatusCode.Created);
-        } else if (trainingStatus === TRAININGSTATUS.NOCHANGE) {
-            res.sendStatus(HttpStatusCode.AlreadyReported);
-        } else {
-            res.sendStatus(HttpStatusCode.Ok);
-        }
+        res.sendStatus(trainingDataStatus);
     } catch (e) {
         console.log(e as Error);
-        res.status(HttpStatusCode.InternalServerError).send(e);
+        processError(e, res);
     }
 });
 
-app.post('/train', async (req, res) => {
+app.post('/trainModel', async (req, res) => {
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        await characterTrainingController.trainModel(res);
+    } catch (e) {
+        console.log(e as Error);
+        processError(e, res);
+    }
+});
+
+app.get('/modelExecution/:executionId', async (req, res) => {
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        const response = await characterTrainingController.getModelTrainingExecution(req);
+
+        return res.status(HttpStatusCode.Ok).send(response);
+    } catch (e) {
+        console.log(e as Error);
+        processError(e, res);
+    }
+});
+
+app.get('/model', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 
-app.get('/getModelTrainingStatus/:executionId', async (req, res) => {
-    throw new Error('NOT IMPLEMENTED');
-});
-
-app.get('/getLatestModel', async (req, res) => {
+app.get('/models', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 

@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
 import { CharacterTrainingDataStorageDao } from '../dao/characterTrainingDataStorageDao';
-import { IConfig, TrainingData } from '../types/trainerTypes';
+import { IConfig, SavedTrainingData, TrainingData } from '../types/trainerTypes';
 
 export class CharacterTrainingDataStorage {
     private config: IConfig;
@@ -21,5 +21,9 @@ export class CharacterTrainingDataStorage {
         }
 
         return false;
+    }
+
+    public async getAllTrainingData(): Promise<SavedTrainingData[]> {
+        return await this.characterTrainingDataStorageDao.getAllTrainingData();
     }
 }

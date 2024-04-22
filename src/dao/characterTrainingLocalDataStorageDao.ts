@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import * as fsSync from 'fs';
 import { IConfig, SavedTrainingData } from '../types/trainerTypes';
 import { deleteAllFilesInFolder } from './daoUtils';
+import path from 'path';
 
 export class CharacterTrainingLocalDataStorageDao extends CharacterTrainingDataStorageDao {
     private config: IConfig;
@@ -38,6 +39,22 @@ export class CharacterTrainingLocalDataStorageDao extends CharacterTrainingDataS
         const output = JSON.stringify({ character, data: Array.from(newData.entries()) } as SavedTrainingData);
 
         await fs.writeFile(filePath, output);
+    }
+
+    public override async getAllTrainingData(): Promise<SavedTrainingData[]> {
+        const folderPath = this.config.storageUrl + '/data';
+        const savedTrainingData: SavedTrainingData[] = [];
+
+        if (fsSync.existsSync(folderPath)) {
+            const files = await fs.readdir(folderPath);
+
+            for (let file of files) {
+                const filePath = path.join(folderPath, file);
+                savedTrainingData.push(JSON.parse((await fs.readFile(filePath)).toString()) as SavedTrainingData);
+            }
+        }
+
+        return savedTrainingData;
     }
 
     public override async deleteSelectedCharacterTrainingData(character: string): Promise<void> {

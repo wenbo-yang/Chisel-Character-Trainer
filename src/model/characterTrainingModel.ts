@@ -1,8 +1,12 @@
 import { CharacterModelStorage } from './characterModelStorage';
 import { CharacterTrainingDataStorage } from './characterTrainingDataStorage';
-import { IConfig, TRAININGSTATUS, TrainResponse, TrainingData } from '../types/trainerTypes';
+import { IConfig, ModelTrainingExecution, TRAININGSTATUS, TrainingData } from '../types/trainerTypes';
 import { Config } from '../config';
 import { v5 as uuidv5 } from 'uuid';
+import { NeuralNetwork } from 'brain.js';
+import { ungzip } from 'node-gzip';
+import { INeuralNetworkData, INeuralNetworkDatum, INeuralNetworkJSON } from 'brain.js/dist/neural-network';
+import { Mode } from 'fs';
 
 export class CharacterTrainingModel {
     private config: IConfig;
@@ -38,8 +42,59 @@ export class CharacterTrainingModel {
 
         const newDataSaved = await this.characterTrainingDataStorage.saveData(trainingData);
 
-        await this.characterModelStorage.getModelTrainingExecution(newDataSaved);
+        if (newDataSaved) {
+            await this.characterModelStorage.createTrainingSession();
+            return TRAININGSTATUS.CREATED;
+        }
 
-        return newDataSaved ? TRAININGSTATUS.CREATED : TRAININGSTATUS.NOCHANGE;
+        return TRAININGSTATUS.NOCHANGE;
+    }
+
+    public async startModelTraining(): Promise<ModelTrainingExecution> {
+        return await this.characterModelStorage.startModelTraining();
+    }
+
+    public async trainModel(executionId: string): Promise<void> {
+        const savedTrainingData = await this.characterTrainingDataStorage.getAllTrainingData();
+
+        const net = new NeuralNetwork();
+
+        const trainingData: Array<INeuralNetworkDatum<INeuralNetworkData, INeuralNetworkData>> = [];
+
+        for (let i = 0; i < savedTrainingData.length; i++) {
+            for (let j = 0; j < savedTrainingData[i].data.length; j++) {
+                const processedData = await this.processSavedData(savedTrainingData[i].data[j][1]); // note data[j][0] is the key
+
+                let output: any = {};
+                output[savedTrainingData[i].character] = 1;
+                let input: INeuralNetworkData = processedData;
+                trainingData.push({ input, output });
+            }
+        }
+
+        await net.trainAsync(trainingData);
+        const modelToBeSaved: INeuralNetworkJSON = net.toJSON();
+        await this.characterModelStorage.saveModel(executionId, modelToBeSaved);
+    }
+
+    public async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
+        return await this.characterModelStorage.getModelTrainingExecution(executionId);
+    }
+
+    private async processSavedData(data: string): Promise<number[]> {
+        const zeroOneString = (await ungzip(Buffer.from(data, 'base64'))).toString();
+
+        const zeroOneArray: number[] = [];
+
+        for (let i = 0; i < zeroOneString.length; i++) {
+            const c = zeroOneString.charAt(i);
+            if (c === '1') {
+                zeroOneArray.push(1);
+            } else if (c === '0') {
+                zeroOneArray.push(0);
+            }
+        }
+
+        return zeroOneArray;
     }
 }
