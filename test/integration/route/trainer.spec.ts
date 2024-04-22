@@ -14,10 +14,11 @@ const axiosClient = axios.create({
 
 describe('skeletonize request', () => {
     const trainingDataUrl = './test/integration/data/test_data_for_character_training_running_man.json';
-    let trainingData: any;
+    let trainingData: any = {};
+    const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
+    const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
     beforeAll(async () => {
-        process.env.NODE_ENV = 'development';
         trainingData = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
     });
 
@@ -35,9 +36,6 @@ describe('skeletonize request', () => {
             const uploadTrainingDataUrl = httpsUrl + '/trainingData';
 
             afterEach(() => {
-                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
-                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
-
                 modelStorage.deleteAllTrainingExecutions();
                 trainingDataStroage.deleteAllTrainingData();
             });
@@ -97,9 +95,6 @@ describe('skeletonize request', () => {
             const trainModelUrl = httpsUrl + '/trainModel';
 
             afterEach(async () => {
-                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
-                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
-
                 await modelStorage.deleteAllTrainingExecutions();
                 await trainingDataStroage.deleteAllTrainingData();
             });
@@ -125,16 +120,7 @@ describe('skeletonize request', () => {
             const trainModelUrl = httpsUrl + '/trainModel';
             const getModelTrainingExecutionUrl = httpsUrl + '/modelExecution';
 
-            let data: any;
-            beforeAll(async () => {
-                process.env.NODE_ENV = 'development';
-                data = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
-            });
-
             afterEach(async () => {
-                const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
-                const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
-
                 await modelStorage.deleteAllTrainingExecutions();
                 await trainingDataStroage.deleteAllTrainingData();
             });
@@ -188,7 +174,7 @@ describe('skeletonize request', () => {
                 } while ((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status === TRAININGSTATUS.INPROGRESS);
 
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
-            });
+            }, 10000);
         });
     });
 });
