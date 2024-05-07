@@ -3,7 +3,7 @@ import { IConfig, ModelTrainingExecution, NotFoundError, TRAININGSTATUS } from '
 import { CharacterModelStorageDao } from './characterModelStorageDao';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs/promises';
-import fsSync from 'fs';
+import fsSync, { ReadStream } from 'fs';
 import path from 'path';
 import { deleteAllFilesInFolder } from './daoUtils';
 import { INeuralNetworkJSON } from 'brain.js/dist/neural-network';
@@ -75,7 +75,7 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
             this.notFoundError('SaveModel: execution is not found');
         }
 
-        const targetModelFilePath = path.join(this.folderPath, executionId + '_model_' + '.json');
+        const targetModelFilePath = path.join(this.folderPath, executionId + '_model' + '.json');
         await fs.writeFile(targetModelFilePath, JSON.stringify(modelToBeSaved));
 
         const targetExecution = JSON.parse((await fs.readFile(targetFilePath)).toString()) as ModelTrainingExecution;
@@ -92,6 +92,33 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         }
 
         return JSON.parse((await fs.readFile(targetFilePath)).toString()) as ModelTrainingExecution;
+    }
+
+    public override async getLatestTrainedModel(): Promise<ReadStream> {
+        if (!fsSync.existsSync(this.folderPath)) {
+            this.notFoundError('getLatestTrainedModel: no folder is found');
+        }
+
+        const files = await fs.readdir(this.folderPath);
+
+        if (!files || files.length === 0) {
+            this.notFoundError('getLatestTrainedModel: no files in folder');
+        }
+
+        const executions = await this.getExecutions();
+        let modelPath = undefined
+        for (const execution of executions) {
+            if (execution.status === 'FINISHED') {
+                modelPath = execution.modelPath;
+                break;
+            }
+        }
+
+        if (!modelPath) {
+            this.notFoundError('getLatestTrainedModel: no model found')
+        }
+
+        return fsSync.createReadStream(modelPath);
     }
 
     private get folderPath(): string {

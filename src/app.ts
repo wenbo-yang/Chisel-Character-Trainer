@@ -61,11 +61,17 @@ app.get('/modelExecution/:executionId', async (req, res) => {
     }
 });
 
-app.get('/model', async (req, res) => {
-    throw new Error('NOT IMPLEMENTED');
+app.get('/latestModel', async (req, res) => {
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        await characterTrainingController.getLatestTrainedModel(res);
+    } catch (e) {
+        console.log(e as Error);
+        processError(e, res);
+    }
 });
 
-app.get('/models', async (req, res) => {
+app.get('/model/:executionId', async (req, res) => {
     throw new Error('NOT IMPLEMENTED');
 });
 

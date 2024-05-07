@@ -6,7 +6,7 @@ import { v5 as uuidv5 } from 'uuid';
 import { NeuralNetwork } from 'brain.js';
 import { ungzip } from 'node-gzip';
 import { INeuralNetworkData, INeuralNetworkDatum, INeuralNetworkJSON } from 'brain.js/dist/neural-network';
-import { Mode } from 'fs';
+import { ReadStream } from 'fs';
 
 export class CharacterTrainingModel {
     private config: IConfig;
@@ -79,6 +79,10 @@ export class CharacterTrainingModel {
 
     public async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
         return await this.characterModelStorage.getModelTrainingExecution(executionId);
+    }
+
+    public async getLatestTrainedModel(): Promise<ReadStream> {
+        return await this.characterModelStorage.getLatestTrainedModel();
     }
 
     private async processSavedData(data: string): Promise<number[]> {

@@ -1,7 +1,9 @@
 import { INeuralNetworkJSON } from 'brain.js/dist/neural-network';
 import { ModelTrainingExecution, TRAININGSTATUS } from '../types/trainerTypes';
+import { ReadStream } from 'fs';
 
 export abstract class CharacterModelStorageDao {
+
     constructor() {}
 
     public async getLatestModel(): Promise<ModelTrainingExecution> {
@@ -34,5 +36,9 @@ export abstract class CharacterModelStorageDao {
 
     public async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
         throw new Error('getModelTrainingExecution Abstract class');
+    }
+
+    public async getLatestTrainedModel(): Promise<ReadStream> {
+        throw new Error('getLatestTrainedModel Abstract class');
     }
 }
