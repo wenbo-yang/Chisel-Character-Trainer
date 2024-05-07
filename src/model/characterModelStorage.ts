@@ -3,6 +3,7 @@ import { Config } from '../config';
 import { IConfig, ModelTrainingExecution, TRAININGSTATUS, TrainModelResponse } from '../types/trainerTypes';
 import { CharacterModelStorageDao } from '../dao/characterModelStorageDao';
 import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
+import { ReadStream } from 'fs';
 
 export class CharacterModelStorage {
     private config: IConfig;
@@ -36,5 +37,9 @@ export class CharacterModelStorage {
 
     public async getModelTrainingExecution(executionId: string): Promise<ModelTrainingExecution> {
         return await this.characterModelStorageDao.getModelTrainingExecution(executionId);
+    }
+
+    public async getLatestTrainedModel(): Promise<ReadStream> {
+        return await this.characterModelStorageDao.getLatestTrainedModel();
     }
 }

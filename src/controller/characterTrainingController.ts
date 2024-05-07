@@ -3,7 +3,7 @@ import { ParsedQs } from 'qs';
 import { Config } from '../config';
 import { CharacterTrainingModel } from '../model/characterTrainingModel';
 import { gzip, ungzip } from 'node-gzip';
-import { COMPRESSIONTYPE, DoNotRespondError, IConfig, ModelTrainingExecution, TRAININGDATATYPE, TRAININGSTATUS, TrainModelResponse, UploadTrainingDataRequestBody } from '../types/trainerTypes';
+import { COMPRESSIONTYPE, DoNotRespondError, IConfig, ModelTrainingExecution, NotFoundError, TRAININGDATATYPE, TRAININGSTATUS, TrainModelResponse, UploadTrainingDataRequestBody } from '../types/trainerTypes';
 import { HttpStatusCode } from 'axios';
 
 export class CharacterTrainingController {
@@ -56,6 +56,21 @@ export class CharacterTrainingController {
 
     public async getModelTrainingExecution(req: Request<{ executionId: string }, any, any, ParsedQs, Record<string, any>>): Promise<ModelTrainingExecution> {
         return await this.characterTrainingModel.getModelTrainingExecution(req.params.executionId);
+    }
+
+    public async getLatestTrainedModel(res: Response<any, Record<string, any>, number>): Promise<void> {
+        try {
+            const fsReadStream = await this.characterTrainingModel.getLatestTrainedModel();
+            fsReadStream.pipe(res);
+        }
+        catch (e) {
+            if (e instanceof NotFoundError) {
+                throw e;
+            }
+            else {
+                throw new DoNotRespondError(e as Error);
+            }
+        }
     }
 
     private async getDecompressedData(requestBody: UploadTrainingDataRequestBody): Promise<string[]> {
