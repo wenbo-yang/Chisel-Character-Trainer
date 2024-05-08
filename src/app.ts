@@ -72,7 +72,13 @@ app.get('/latestModel', async (req, res) => {
 });
 
 app.get('/model/:executionId', async (req, res) => {
-    throw new Error('NOT IMPLEMENTED');
+    try {
+        const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
+        await characterTrainingController.getTrainedModelByExecutionId(req, res);
+    } catch (e) {
+        console.log(e as Error);
+        processError(e, res);
+    }
 });
 
 const httpServer = http.createServer(app);

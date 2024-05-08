@@ -85,6 +85,10 @@ export class CharacterTrainingModel {
         return await this.characterModelStorage.getLatestTrainedModel();
     }
 
+    public async getTrainedModelByExecutionId(executionId: string): Promise<ReadStream> {
+        return await this.characterModelStorage.getTrainedModelByExecutionId(executionId);
+    }
+
     private async processSavedData(data: string): Promise<number[]> {
         const zeroOneString = (await ungzip(Buffer.from(data, 'base64'))).toString();
 

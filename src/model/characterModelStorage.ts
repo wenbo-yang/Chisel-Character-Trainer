@@ -6,6 +6,7 @@ import { CharacterStorageDaoFactory } from '../dao/characterStorageDaoFactory';
 import { ReadStream } from 'fs';
 
 export class CharacterModelStorage {
+
     private config: IConfig;
     private characterModelStorageDao: CharacterModelStorageDao;
     constructor(config?: IConfig, characterModelStorageDao?: CharacterModelStorageDao) {
@@ -41,5 +42,9 @@ export class CharacterModelStorage {
 
     public async getLatestTrainedModel(): Promise<ReadStream> {
         return await this.characterModelStorageDao.getLatestTrainedModel();
+    }
+
+    public async getTrainedModelByExecutionId(executionId: string): Promise<ReadStream> {
+        return await this.characterModelStorageDao.getTrainedModelByExecutionId(executionId);
     }
 }

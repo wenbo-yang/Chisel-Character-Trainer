@@ -220,5 +220,48 @@ describe('skeletonize request', () => {
                 expect(latestModel.data.type).toEqual('NeuralNetwork')
             }, 10000);
         });
+
+        describe('GET /model', () => {
+            const uploadTrainingDataUrl = httpsUrl + '/trainingData';
+            const trainModelUrl = httpsUrl + '/trainModel';
+            const getModelTrainingExecutionUrl = httpsUrl + '/modelExecution';
+            const getModelByExeutionId = httpsUrl + '/model';
+
+            afterEach(async () => {
+                await modelStorage.deleteAllTrainingExecutions();
+                await trainingDataStroage.deleteAllTrainingData();
+            });
+
+            it('test123 should respond with with 200 when getting the model of a finished execution_id', async () => {
+                const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'SKELETON').stroke, trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
+
+                const trainModelResponse = await axiosClient.post(trainModelUrl, {});
+                expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
+                expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
+
+                const executionUrl = getModelTrainingExecutionUrl + '/' + (trainModelResponse.data as ModelTrainingExecution).executionId;
+                let getModelTrainingExecutionResponse: any;
+
+                do {
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
+                    getModelTrainingExecutionResponse = await axiosClient.get(executionUrl);
+                } while ((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status === TRAININGSTATUS.INPROGRESS);
+
+                expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
+                expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).modelPath).toBeDefined();
+
+                const modelByExecutionIdResponse =  await axiosClient.get(getModelByExeutionId + '/' + (getModelTrainingExecutionResponse.data as ModelTrainingExecution).executionId);
+                
+                expect(modelByExecutionIdResponse.data).toBeDefined()
+                expect(modelByExecutionIdResponse.data.type).toEqual('NeuralNetwork')
+            }, 10000);
+        });
     });
 });
