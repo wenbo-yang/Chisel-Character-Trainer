@@ -4,6 +4,7 @@ import { ReadStream } from 'fs';
 
 export abstract class CharacterModelStorageDao {
 
+
     constructor() {}
 
     public async getLatestModel(): Promise<ModelTrainingExecution> {
@@ -39,6 +40,10 @@ export abstract class CharacterModelStorageDao {
     }
 
     public async getLatestTrainedModel(): Promise<ReadStream> {
+        throw new Error('getLatestTrainedModel Abstract class');
+    }
+
+    public async getTrainedModelByExecutionId(executionId: string): Promise<ReadStream> {
         throw new Error('getLatestTrainedModel Abstract class');
     }
 }
