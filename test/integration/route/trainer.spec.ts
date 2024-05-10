@@ -189,6 +189,10 @@ describe('skeletonize request', () => {
                 await trainingDataStroage.deleteAllTrainingData();
             });
 
+            it('should respond with with 404 when not found latest trained execution', async () => {
+                await expect(axiosClient.get(getLatestModel)).rejects.toThrow('Request failed with status code 404');
+            });
+
             it('should respond with with 200 when getting the model of the latest trained execution', async () => {
                 const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
@@ -214,10 +218,10 @@ describe('skeletonize request', () => {
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).modelPath).toBeDefined();
 
-                const latestModel =  await axiosClient.get(getLatestModel);
-                
-                expect(latestModel.data).toBeDefined()
-                expect(latestModel.data.type).toEqual('NeuralNetwork')
+                const latestModel = await axiosClient.get(getLatestModel);
+
+                expect(latestModel.data).toBeDefined();
+                expect(latestModel.data.type).toEqual('NeuralNetwork');
             }, 10000);
         });
 
@@ -232,7 +236,29 @@ describe('skeletonize request', () => {
                 await trainingDataStroage.deleteAllTrainingData();
             });
 
-            it('test123 should respond with with 200 when getting the model of a finished execution_id', async () => {
+            it('should respond with with 404 not found when getting the model of a unfinished execution_id', async () => {
+                const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
+                    character: '走',
+                    dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
+                    compression: COMPRESSIONTYPE.PLAIN,
+                    data: [trainingData.transformedData.find((s: any) => s.type === 'SKELETON').stroke, trainingData.transformedData.find((s: any) => s.type === 'ORIGINAL').stroke],
+                });
+
+                expect(uploadTrainingDataResponse.status).toEqual(HttpStatusCode.Created);
+
+                const trainModelResponse = await axiosClient.post(trainModelUrl, {});
+                expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
+                expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
+
+                try {
+                    await axiosClient.get(getModelByExeutionId + '/' + (trainModelResponse.data as ModelTrainingExecution).executionId);
+                } catch (e: any) {
+                    expect(e.response.status).toEqual(404);
+                    expect(e.response.data).toContain('Not Found: getTrainedModelByExecutionId');
+                }
+            });
+
+            it('should respond with with 200 when getting the model of a finished execution_id', async () => {
                 const uploadTrainingDataResponse = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
@@ -257,10 +283,10 @@ describe('skeletonize request', () => {
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).modelPath).toBeDefined();
 
-                const modelByExecutionIdResponse =  await axiosClient.get(getModelByExeutionId + '/' + (getModelTrainingExecutionResponse.data as ModelTrainingExecution).executionId);
-                
-                expect(modelByExecutionIdResponse.data).toBeDefined()
-                expect(modelByExecutionIdResponse.data.type).toEqual('NeuralNetwork')
+                const modelByExecutionIdResponse = await axiosClient.get(getModelByExeutionId + '/' + (getModelTrainingExecutionResponse.data as ModelTrainingExecution).executionId);
+
+                expect(modelByExecutionIdResponse.data).toBeDefined();
+                expect(modelByExecutionIdResponse.data.type).toEqual('NeuralNetwork');
             }, 10000);
         });
     });

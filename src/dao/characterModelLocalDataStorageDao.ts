@@ -96,7 +96,8 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
 
     public override async getLatestTrainedModel(): Promise<ReadStream> {
         const executions = await this.getExecutions();
-        let modelPath = undefined
+
+        let modelPath = undefined;
         for (const execution of executions) {
             if (execution.status === TRAININGSTATUS.FINISHED) {
                 modelPath = execution.modelPath;
@@ -105,7 +106,7 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
         }
 
         if (!modelPath) {
-            this.notFoundError('getLatestTrainedModel: no model found')
+            this.notFoundError('getLatestTrainedModel: no model found');
         }
 
         return fsSync.createReadStream(modelPath);
@@ -113,12 +114,12 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
 
     public override async getTrainedModelByExecutionId(executionId: string): Promise<ReadStream> {
         const execution = await this.getModelTrainingExecution(executionId);
-        
+
         if (execution.status !== TRAININGSTATUS.FINISHED) {
             this.notFoundError(`getTrainedModelByExecutionId: ${executionId} model has not finished training yet. Current status: ${execution.status}`);
         }
 
-        return fsSync.createReadStream(execution.modelPath)
+        return fsSync.createReadStream(execution.modelPath);
     }
 
     private get folderPath(): string {
@@ -127,7 +128,6 @@ export class CharacterModelLocalDataStorageDao extends CharacterModelStorageDao 
 
     private async getExecutions(): Promise<ModelTrainingExecution[]> {
         const executions: ModelTrainingExecution[] = [];
-
         if (fsSync.existsSync(this.folderPath)) {
             const files = await fs.readdir(this.folderPath);
 
