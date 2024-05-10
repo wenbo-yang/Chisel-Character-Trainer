@@ -7,7 +7,6 @@ import { COMPRESSIONTYPE, DoNotRespondError, IConfig, ModelTrainingExecution, No
 import { HttpStatusCode } from 'axios';
 
 export class CharacterTrainingController {
-
     private config: IConfig;
     private characterTrainingModel: CharacterTrainingModel;
 
@@ -63,29 +62,25 @@ export class CharacterTrainingController {
         try {
             const fsReadStream = await this.characterTrainingModel.getLatestTrainedModel();
             fsReadStream.pipe(res);
-        }
-        catch (e) {
+        } catch (e) {
             if (e instanceof NotFoundError) {
                 throw e;
-            }
-            else {
+            } else {
                 throw new DoNotRespondError(e as Error);
             }
         }
     }
 
-    public async getTrainedModelByExecutionId(req: Request<{ executionId: string; }, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
+    public async getTrainedModelByExecutionId(req: Request<{ executionId: string }, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>): Promise<void> {
         try {
-            const executionId = req.params.executionId
+            const executionId = req.params.executionId;
 
             const fsReadStream = await this.characterTrainingModel.getTrainedModelByExecutionId(executionId);
             fsReadStream.pipe(res);
-        }
-        catch (e) {
+        } catch (e) {
             if (e instanceof NotFoundError) {
                 throw e;
-            }
-            else {
+            } else {
                 throw new DoNotRespondError(e as Error);
             }
         }

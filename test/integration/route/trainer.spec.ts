@@ -218,10 +218,10 @@ describe('skeletonize request', () => {
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).modelPath).toBeDefined();
 
-                const latestModel =  await axiosClient.get(getLatestModel);
-                
-                expect(latestModel.data).toBeDefined()
-                expect(latestModel.data.type).toEqual('NeuralNetwork')
+                const latestModel = await axiosClient.get(getLatestModel);
+
+                expect(latestModel.data).toBeDefined();
+                expect(latestModel.data.type).toEqual('NeuralNetwork');
             }, 10000);
         });
 
@@ -249,10 +249,10 @@ describe('skeletonize request', () => {
                 const trainModelResponse = await axiosClient.post(trainModelUrl, {});
                 expect(trainModelResponse.status).toEqual(HttpStatusCode.Created);
                 expect((trainModelResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.INPROGRESS);
-                
+
                 try {
                     await axiosClient.get(getModelByExeutionId + '/' + (trainModelResponse.data as ModelTrainingExecution).executionId);
-                } catch(e: any) {
+                } catch (e: any) {
                     expect(e.response.status).toEqual(404);
                     expect(e.response.data).toContain('Not Found: getTrainedModelByExecutionId');
                 }
@@ -283,11 +283,11 @@ describe('skeletonize request', () => {
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).status).toEqual(TRAININGSTATUS.FINISHED);
                 expect((getModelTrainingExecutionResponse.data as ModelTrainingExecution).modelPath).toBeDefined();
 
-                const modelByExecutionIdResponse =  await axiosClient.get(getModelByExeutionId + '/' + (getModelTrainingExecutionResponse.data as ModelTrainingExecution).executionId);
-                
-                expect(modelByExecutionIdResponse.data).toBeDefined()
-                expect(modelByExecutionIdResponse.data.type).toEqual('NeuralNetwork')
-            }, 10000); 
+                const modelByExecutionIdResponse = await axiosClient.get(getModelByExeutionId + '/' + (getModelTrainingExecutionResponse.data as ModelTrainingExecution).executionId);
+
+                expect(modelByExecutionIdResponse.data).toBeDefined();
+                expect(modelByExecutionIdResponse.data.type).toEqual('NeuralNetwork');
+            }, 10000);
         });
     });
 });
