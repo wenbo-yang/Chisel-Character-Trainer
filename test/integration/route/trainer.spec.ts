@@ -12,7 +12,7 @@ const axiosClient = axios.create({
     }),
 });
 
-describe('skeletonize request', () => {
+describe('train request', () => {
     const trainingDataUrl = './test/integration/data/test_data_for_character_training_running_man.json';
     let trainingData: any = {};
     const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
