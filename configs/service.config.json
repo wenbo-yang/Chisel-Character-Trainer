@@ -1,6 +1,6 @@
 {
     "serviceName": "character-trainer",
-    "shortName": "c-train",
+    "shortName": "c-char-train",
     "storage": [
         {
             "env": "development",
