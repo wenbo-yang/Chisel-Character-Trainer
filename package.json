@@ -11,7 +11,7 @@
         "prettier-json": "prettier --config prettier.json --write \"**/*.json\"",
         "prettier": "run-s prettier-ts prettier-json",
         "stop": "pkill -f c-char-train",
-        "integration-tests-only": "npx jest --runInBand --testPathPattern=./test/integration --testPathIgnorePatterns=./Chisel-Model-Training -t \"test123\"",
+        "integration-tests-only": "npx jest --runInBand --testPathPattern=./test/integration --testPathIgnorePatterns=./Chisel-Model-Training",
         "integration-tests": "concurrently \"run-s start\" \"run-s integration-tests-only && run-s stop\""
     },
     "keywords": [],
