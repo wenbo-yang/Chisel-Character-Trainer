@@ -2,12 +2,12 @@ import express from 'express';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
-import { Config } from './config';
+import { CharacterTrainerServiceConfig } from './config';
 import { ControllerFactory } from './controller/controllerFactory';
 import { HttpStatusCode } from 'axios';
 import { processError } from './error';
 
-const config = new Config();
+const config = new CharacterTrainerServiceConfig();
 
 const servicePorts = config.servicePorts;
 
@@ -30,7 +30,7 @@ app.get('/healthCheck', (req, res) => {
 app.post('/trainingData', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const trainingDataStatus = await characterTrainingController.uploadTrainingData(req);
+        const trainingDataStatus = await characterTrainingController.uploadCharacterTrainingData(req);
 
         res.sendStatus(trainingDataStatus);
     } catch (e) {
@@ -42,7 +42,7 @@ app.post('/trainingData', async (req, res) => {
 app.post('/trainModel', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        await characterTrainingController.trainModel(res);
+        await characterTrainingController.trainCharacterModel(res);
     } catch (e) {
         console.log(e as Error);
         processError(e, res);
@@ -52,7 +52,7 @@ app.post('/trainModel', async (req, res) => {
 app.get('/modelExecution/:executionId', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        const response = await characterTrainingController.getModelTrainingExecution(req);
+        const response = await characterTrainingController.getCharacterModelTrainingExecution(req);
 
         return res.status(HttpStatusCode.Ok).send(response);
     } catch (e) {
@@ -64,7 +64,7 @@ app.get('/modelExecution/:executionId', async (req, res) => {
 app.get('/latestModel', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        await characterTrainingController.getLatestTrainedModel(res);
+        await characterTrainingController.getLatestCharacterTrainedModel(res);
     } catch (e) {
         console.log(e as Error);
         processError(e, res);
@@ -74,7 +74,7 @@ app.get('/latestModel', async (req, res) => {
 app.get('/model/:executionId', async (req, res) => {
     try {
         const characterTrainingController = ControllerFactory.makeCharacterTrainingController(config);
-        await characterTrainingController.getTrainedModelByExecutionId(req, res);
+        await characterTrainingController.getTrainedCharacterModelByExecutionId(req, res);
     } catch (e) {
         console.log(e as Error);
         processError(e, res);
