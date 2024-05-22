@@ -1,8 +1,8 @@
 import * as staticServiceConfig from '../configs/service.config.json';
 import * as globalServicePortMappings from '../Chisel-Global-Service-Configs/configs/globalServicePortMappings.json';
-import { IConfig, ServiceConfig, ServicePorts } from './types/trainerTypes';
+import { ICharacterTrainerServiceConfig, ServiceConfig, ServicePorts } from './types/characterTrainerTypes';
 
-export class Config implements IConfig {
+export class CharacterTrainerServiceConfig implements ICharacterTrainerServiceConfig {
     private serviceConfig: ServiceConfig;
     private globalServicePortMappings: any;
 
@@ -10,12 +10,12 @@ export class Config implements IConfig {
         this.serviceConfig = serviceConfig || staticServiceConfig;
         this.globalServicePortMappings = parsedGlobalServicePortMappings || globalServicePortMappings;
     }
-
+    
     public get shortName(): string {
         return this.serviceConfig.shortName;
     }
 
-    public get serviceUUID(): string {
+    public get modelUUID(): string {
         return 'c8a20000-3f40-400a-bd8c-72a10109ffff'; // alias for char---training
     }
 

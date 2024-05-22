@@ -2,8 +2,8 @@ import { httpsUrl, integrationTestConfig } from '../utils';
 import axios, { HttpStatusCode } from 'axios';
 import https from 'https';
 import fs from 'fs/promises';
-import { COMPRESSIONTYPE, ModelTrainingExecution, TRAININGDATATYPE, TRAININGSTATUS } from '../../../src/types/trainerTypes';
-import { CharacterStorageDaoFactory } from '../../../src/dao/characterStorageDaoFactory';
+import { COMPRESSIONTYPE, ModelTrainingExecution, TRAININGDATATYPE, TRAININGSTATUS } from '../../../Chisel-Model-Training/src/types/trainerTypes';
+import { StorageDaoFactory } from '../../../Chisel-Model-Training/src/dao/storageDaoFactory';
 import { v4 as uuidv4 } from 'uuid';
 
 const axiosClient = axios.create({
@@ -15,8 +15,8 @@ const axiosClient = axios.create({
 describe('train request', () => {
     const trainingDataUrl = './test/integration/data/test_data_for_character_training_running_man.json';
     let trainingData: any = {};
-    const modelStorage = CharacterStorageDaoFactory.makeModelStorageDao(integrationTestConfig);
-    const trainingDataStroage = CharacterStorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
+    const modelStorage = StorageDaoFactory.makeModelStorageDao(integrationTestConfig);
+    const trainingDataStroage = StorageDaoFactory.makeTrainingDataStorageDao(integrationTestConfig);
 
     beforeAll(async () => {
         trainingData = JSON.parse((await fs.readFile(trainingDataUrl)).toString());
@@ -125,7 +125,7 @@ describe('train request', () => {
                 await trainingDataStroage.deleteAllTrainingData();
             });
 
-            it(' should respond with 404 not found when trying to fiind an non-existing training execution', async () => {
+            it('test123 should respond with 404 not found when trying to fiind an non-existing training execution', async () => {
                 const notExistingExecutionUrl = getModelTrainingExecutionUrl + '/' + uuidv4();
                 await expect(axiosClient.get(notExistingExecutionUrl)).rejects.toThrowError('Request failed with status code 404');
             });
