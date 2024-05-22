@@ -1,6 +1,7 @@
 import { Response } from 'express-serve-static-core';
 import { HttpStatusCode } from 'axios';
 import { NotFoundError } from '../Chisel-Model-Training/src/types/trainerTypes';
+import { DoNotRespondError } from './types/characterTrainerTypes';
 
 export function processError(e: any, res: Response<any, Record<string, any>, number>) {
     if (e instanceof NotFoundError) {
