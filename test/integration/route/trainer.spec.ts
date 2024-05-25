@@ -40,7 +40,7 @@ describe('train request', () => {
                 trainingDataStroage.deleteAllTrainingData();
             });
 
-            it('should respond with 201 created with new train request', async () => {
+            it('test123 should respond with 201 created with new train request', async () => {
                 const response = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
@@ -125,7 +125,7 @@ describe('train request', () => {
                 await trainingDataStroage.deleteAllTrainingData();
             });
 
-            it('test123 should respond with 404 not found when trying to fiind an non-existing training execution', async () => {
+            it('should respond with 404 not found when trying to fiind an non-existing training execution', async () => {
                 const notExistingExecutionUrl = getModelTrainingExecutionUrl + '/' + uuidv4();
                 await expect(axiosClient.get(notExistingExecutionUrl)).rejects.toThrowError('Request failed with status code 404');
             });

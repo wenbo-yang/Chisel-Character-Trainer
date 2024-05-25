@@ -10,7 +10,7 @@ export class CharacterTrainerServiceConfig implements ICharacterTrainerServiceCo
         this.serviceConfig = serviceConfig || staticServiceConfig;
         this.globalServicePortMappings = parsedGlobalServicePortMappings || globalServicePortMappings;
     }
-    
+
     public get shortName(): string {
         return this.serviceConfig.shortName;
     }

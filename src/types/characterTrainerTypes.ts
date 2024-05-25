@@ -1,4 +1,4 @@
-import { COMPRESSIONTYPE, IConfig, ModelTrainingExecution, Storage, TRAININGDATATYPE } from '../../Chisel-Model-Training/src/types/trainerTypes' 
+import { COMPRESSIONTYPE, IConfig, ModelTrainingExecution, Storage, TRAININGDATATYPE } from '../../Chisel-Model-Training/src/types/trainerTypes';
 
 export interface UploadCharacterTrainingDataRequestBody {
     character: string;

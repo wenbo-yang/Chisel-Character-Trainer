@@ -7,6 +7,10 @@
             "url": "./dev/localStorage"
         },
         {
+            "env": "local",
+            "url": "./local/localStorage"
+        },
+        {
             "env": "production",
             "url": "not implemented"
         }
