@@ -40,7 +40,7 @@ describe('train request', () => {
                 trainingDataStroage.deleteAllTrainingData();
             });
 
-            it('test123 should respond with 201 created with new train request', async () => {
+            it('should respond with 201 created with new train request', async () => {
                 const response = await axiosClient.post(uploadTrainingDataUrl, {
                     character: '走',
                     dataType: TRAININGDATATYPE.BINARYSTRINGWITHNEWLINE,
