@@ -137,5 +137,6 @@ package-lock.json
 *test.bmp
 node_modules
 
-# ignore dev database
+# ignore dev storage / database
 /dev/localStorage
+/local/localStorage

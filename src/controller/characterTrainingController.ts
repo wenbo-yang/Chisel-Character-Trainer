@@ -13,7 +13,7 @@ export class CharacterTrainingController extends ModelTrainingController {
 
     public async uploadCharacterTrainingData(req: Request<{}, any, any, ParsedQs, Record<string, any>>): Promise<HttpStatusCode> {
         const requestBody = req.body as UploadCharacterTrainingDataRequestBody;
-        
+
         const trainingDataStatus = await super.uploadTrainingData(this.convertUploadTrainingDataToCompatibleWithBaseClass(requestBody));
 
         let responseCode = HttpStatusCode.Ok;
@@ -78,7 +78,7 @@ export class CharacterTrainingController extends ModelTrainingController {
             model: requestBody.character,
             compression: requestBody.compression,
             data: requestBody.data,
-            dataType: requestBody.dataType
-        } as UploadTrainingData
+            dataType: requestBody.dataType,
+        } as UploadTrainingData;
     }
 }
